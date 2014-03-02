@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Home</string>
+    <string name="title_section1">Facebook</string>
+    <string name="title_section2">Twitter</string>
+    <string name="title_section3">LinkedIn</string>
+    <string name="title_section4">Google+</string>
+    <string name="title_section5">Google Translate</string>
+    <string name="title_section6">Google Search</string>
+    <string name="title_add_service">Add your favourite</string>
+
+    <string name="facebook_url">http://m.facebook.com</string>
+    <string name="twitter_url">http://m.twitter.com</string>
+    <string name="google_translate_url">http://translate.google.com/m</string>
+    <string name="google_plus_url">https://plus.google.com/</string>
+    <string name="google_Search_url">https://google.com/m</string>
+    <string name="linkedin_url">https://touch.www.linkedin.com</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+    <string name="action_settings">Settings</string>
+
+<!--    <string-array name="supported_srvices">
+        <item>@string/title_section1</item>
+        <item>@string/title_section2</item>
+        <item>@string/title_section3</item>
+    </string-array>-->
+
+</resources>
