@@ -1,6 +1,7 @@
 package com.rajpriya.home;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -182,10 +183,11 @@ public class MainActivity extends ActionBarActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
+            /*FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, SettingsFragment.newInstance())
-                    .commit();
+                    .commit();*/
+            startActivity(new Intent(this, InstalledAppsActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
