@@ -1,5 +1,6 @@
 package com.rajpriya.home;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;;
 import android.app.Activity;
@@ -23,6 +24,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.rajpriya.home.utils.Services;
+
 import java.util.ArrayList;
 
 /**
@@ -43,6 +47,7 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
      */
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
+
     /**
      * A pointer to the current callbacks instance (the Activity).
      */
@@ -56,6 +61,7 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
     private View mFragmentContainerView;
+    private ArrayList<String> mStoredNames;
 
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
@@ -85,6 +91,7 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
 
         // Select either the default item (0) or the last selected item.
         //selectItem(mCurrentSelectedPosition);
+
     }
 
     @Override
@@ -97,8 +104,11 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        mDrawerListView = (ListView) inflater.inflate(
+
+        View root =  inflater.inflate(
                 R.layout.fragment_navigation_drawer, container, false);
+
+        mDrawerListView = (ListView)root.findViewById(R.id.listview);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -112,8 +122,7 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
                 getString(R.string.title_section3),
                 getString(R.string.title_section4),
                 getString(R.string.title_section5),
-                getString(R.string.title_section6),
-                getString(R.string.title_add_service)
+                getString(R.string.title_section6)
         };
 
         for (int i = 0; i < values.length; ++i) {
@@ -126,8 +135,32 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
                 android.R.id.text1, list
         ));
 
+        root.findViewById(R.id.web_app).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDrawerListView.setVisibility(mDrawerListView.getVisibility() == View.GONE ?
+                View.VISIBLE : View.GONE);
+            }
+        });
+
+        root.findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                AddServiceDialog editNameDialog = new AddServiceDialog(NavigationDrawerFragment.this);
+                editNameDialog.show(fm, "fragment_edit_name");
+            }
+        });
+
+        root.findViewById(R.id.system_apps).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), InstalledAppsActivity.class));
+            }
+        });
+
         //mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-        return mDrawerListView;
+        return root;
     }
 
     public boolean isDrawerOpen() {
@@ -140,14 +173,15 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
      * @param fragmentId   The android:id of this fragment in its activity's layout.
      * @param drawerLayout The DrawerLayout containing this fragment's UI.
      */
-    public void setUp(int fragmentId, DrawerLayout drawerLayout) {
+    public void setUp(int fragmentId, DrawerLayout drawerLayout, ArrayList<String> names) {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
 
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // set up the drawer's list view with items and click listener
-
+        list.addAll(names);
+        mStoredNames = names;
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
@@ -217,29 +251,36 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
         if (mCallbacks != null) {
+/*
             if (position == mDrawerListView.getCount()-1) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 AddServiceDialog editNameDialog = new AddServiceDialog(this);
                 editNameDialog.show(fm, "fragment_edit_name");
             } else
+*/
                 mCallbacks.onNavigationDrawerItemSelected(position);
         }
     }
 
     @Override
     public void onFinishEditDialog(String name, String url) {
-        //mUrls.add(url);
-        //(ArrayAdapter<String>(mNavigationDrawerFragment.mDrawerListView.getAdapter())).
-        //mNavigationDrawerFragment.mDrawerListView.getAdapter().  setNotifyOnChange(true);
+
+        if (!mStoredNames.contains(name)) {
+            mStoredNames.add(name);
+        } else {
+            //alert
+            return;
+        }
+
         ArrayAdapter<String> ar = ((ArrayAdapter<String>)mDrawerListView.getAdapter());
-        //((ArrayAdapter<String>)mDrawerListView.getAdapter()).insert(name, ar.getCount()-1);//   add(name);
-        //((ArrayAdapter<String>)mDrawerListView.getAdapter()).clear();
-        list.add(list.size()-1, name);
+
+        list.add(name);
         ((ArrayAdapter<String>)mDrawerListView.getAdapter()).notifyDataSetChanged();
 
         if (mCallbacks != null) {
                 mCallbacks.onNewItemAdded(url);
         }
+
 
     }
 

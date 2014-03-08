@@ -1,10 +1,16 @@
 package com.rajpriya.home;
 
+import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,13 +19,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.rajpriya.home.utils.Utils;
+
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class InstalledAppsActivity extends ActionBarActivity {
@@ -30,7 +42,8 @@ public class InstalledAppsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_installed_apps);
 
-        mApps = getPackages();
+        //mApps = getPackages();
+        mApps=new ArrayList<PInfo>();
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -64,6 +77,9 @@ public class InstalledAppsActivity extends ActionBarActivity {
      * A placeholder fragment containing a simple view.
      */
     public  class PlaceholderFragment extends Fragment {
+        private GridView mV;
+        private LinearLayout mT;
+        private Context c;
 
         public PlaceholderFragment() {
         }
@@ -71,8 +87,93 @@ public class InstalledAppsActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
+            c=getActivity();
             View rootView = inflater.inflate(R.layout.fragment_installed_apps, container, false);
-            ((GridView)rootView.findViewById(R.id.appgrid)).setAdapter(new AppAdapter(getActivity() , mApps));
+            mV = ((GridView)rootView.findViewById(R.id.appgrid));
+            mT = ((LinearLayout)rootView.findViewById(R.id.tools));
+            mV.setAdapter(new AppAdapter(getActivity() , mApps));
+
+            final AsyncTask task = new FetchAppListTask(getActivity(), mV).execute();
+
+            mV.setOnScrollListener(new AbsListView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(AbsListView absListView, int i) {
+                    mT.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onScroll(AbsListView absListView, int i, int i2, int i3) {
+                    mT.setVisibility(View.GONE);
+                }
+            });
+
+            ((ImageView)rootView.findViewById(R.id.order)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View view) {
+
+                    if (view.isSelected()) {
+                        view.setSelected(false);
+                    Collections.sort(mApps, new Comparator<PInfo>() {
+                        public int compare(PInfo result1, PInfo result2) {
+                           return result1.appname.compareTo(result2.appname);
+                        }
+                    });
+                    } else {
+                        view.setSelected(true);
+                        Collections.sort(mApps, new Comparator<PInfo>() {
+                            public int compare(PInfo result1, PInfo result2) {
+                                return result2.appname.compareTo(result1.appname);
+                            }
+                        });
+                    }
+
+
+                    ((AppAdapter)mV.getAdapter()).notifyDataSetChanged();
+                    //return true;
+                }
+            });
+
+            ((ImageView)rootView.findViewById(R.id.size)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Collections.sort(mApps, new Comparator<PInfo>() {
+                        public int compare(PInfo result1, PInfo result2) {
+                            return result1.size >  result2.size ? 1 : -1;
+                        }
+                    });
+                    ((AppAdapter)mV.getAdapter()).notifyDataSetChanged();
+                    //return true;
+                }
+            });
+
+            ((ImageView)rootView.findViewById(R.id.zoomin)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mV.setNumColumns(mV.getNumColumns() - 1);
+                    //return true;
+                }
+            });
+
+            ((ImageView)rootView.findViewById(R.id.zoomout)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mV.setNumColumns(mV.getNumColumns() + 1);
+                    //return true;
+                }
+            });
+
+            ((ImageView)rootView.findViewById(R.id.search)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                     //task.execute();
+                    //new FetchAppListTask(getActivity(), mV).execute();
+                }
+            });
+
+
+
+
+
             return rootView;
         }
     }
@@ -83,6 +184,7 @@ public class InstalledAppsActivity extends ActionBarActivity {
         private String versionName = "";
         private int versionCode = 0;
         private Drawable icon;
+        private double size;
         private void prettyPrint() {
             Log.e("rajpriya", appname + "\t" + pname + "\t" + versionName + "\t" + versionCode);
         }
@@ -105,12 +207,24 @@ public class InstalledAppsActivity extends ActionBarActivity {
             if ((!getSysPackages) && (p.versionName == null)) {
                 continue ;
             }
+
+            if(this.getPackageManager().getLaunchIntentForPackage(p.packageName) == null){
+                //If you're here, then this is a not launch-able app
+                continue;
+            }
+
+
             PInfo newInfo = new PInfo();
             newInfo.appname = p.applicationInfo.loadLabel(getPackageManager()).toString();
             newInfo.pname = p.packageName;
             newInfo.versionName = p.versionName;
             newInfo.versionCode = p.versionCode;
             newInfo.icon = p.applicationInfo.loadIcon(getPackageManager());
+            File file = new File(p.applicationInfo.sourceDir);
+            double size = file.length();  // size in Byte
+            newInfo.size = size;
+
+
             res.add(newInfo);
         }
         return res;
@@ -128,7 +242,7 @@ public class InstalledAppsActivity extends ActionBarActivity {
 
         }
 
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
 
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -157,6 +271,13 @@ public class InstalledAppsActivity extends ActionBarActivity {
               //  gridView = (View) convertView;
             //}
 
+            gridView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Utils.showActionDialog(context, mApps.get(position).pname);
+                }
+            });
+
             return gridView;
         }
 
@@ -176,4 +297,42 @@ public class InstalledAppsActivity extends ActionBarActivity {
         }
 
     }
+
+
+    public class FetchAppListTask extends AsyncTask<String, Void, Boolean> {
+
+        private ProgressDialog dialog;
+        private Context mContext;
+        private GridView mV;
+
+        public FetchAppListTask(Context context, GridView v) {
+            mContext = context;
+            dialog = new ProgressDialog(mContext);
+            mV=v;
+        }
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            mApps = getPackages();
+            return true;
+        }
+        @Override
+        protected void onPreExecute() {
+            this.dialog.setMessage("Loading app list...");
+            this.dialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+
+
+
+            if (dialog.isShowing())
+                dialog.dismiss();
+
+            mV.setAdapter(new AppAdapter(mContext , mApps));
+            ((AppAdapter)mV.getAdapter()).notifyDataSetChanged();
+        }
+
+    }
+
 }

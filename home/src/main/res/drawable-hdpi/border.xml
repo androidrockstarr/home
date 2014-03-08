@@ -5,6 +5,6 @@
         android:radius="2dp"
  />
     <stroke
-        android:width="2dip"
+        android:width="0.5dip"
         android:color="@android:color/darker_gray" />
 </shape>

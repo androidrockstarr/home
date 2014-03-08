@@ -2,6 +2,8 @@ package com.rajpriya.home;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -9,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,10 +24,15 @@ import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.rajpriya.home.utils.Services;
+
 import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, AddServiceDialog.EditNameDialogListener {
+
+    private static final String PREF_NEWLY_ADDED_SERVICES = "newly_added_web_apps";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -32,6 +40,7 @@ public class MainActivity extends ActionBarActivity
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
     private ArrayList<String> mUrls;
+    private Services mStoredServices;
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -43,14 +52,24 @@ public class MainActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        Gson gson = new Gson();
+        String str = sp.getString(PREF_NEWLY_ADDED_SERVICES, null);
+        if (!TextUtils.isEmpty(str))
+            mStoredServices = gson.fromJson(str, Services.class);
+        else
+            mStoredServices = new Services();
+
+
+                    mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+                (DrawerLayout) findViewById(R.id.drawer_layout),
+                mStoredServices.getNames());
 
         mUrls = new ArrayList<String>();
         mUrls.add(getString(R.string.facebook_url));
@@ -65,6 +84,12 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onNewItemAdded(String url) {
         mUrls.add(url);
+        mStoredServices.getUrls().add(url);
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        Gson gson = new Gson();
+        String str = gson.toJson(mStoredServices, Services.class);
+        sp.edit().putString(PREF_NEWLY_ADDED_SERVICES, str).commit();
     }
         @Override
     public void onNavigationDrawerItemSelected(int position) {
@@ -187,7 +212,7 @@ public class MainActivity extends ActionBarActivity
             fragmentManager.beginTransaction()
                     .replace(R.id.container, SettingsFragment.newInstance())
                     .commit();*/
-            startActivity(new Intent(this, InstalledAppsActivity.class));
+            //startActivity(new Intent(this, InstalledAppsActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
