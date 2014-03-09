@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.rajpriya.home.utils.Services;
+import com.rajpriya.home.utils.WebAppAdatper;
 
 import java.util.ArrayList;
 
@@ -62,6 +63,7 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
     private ListView mDrawerListView;
     private View mFragmentContainerView;
     private ArrayList<String> mStoredNames;
+    private ArrayList<String> mAllUrls;
 
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
@@ -129,11 +131,7 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
             list.add(values[i]);
         }
 
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(
-                getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_1,
-                android.R.id.text1, list
-        ));
+        mDrawerListView.setAdapter(new WebAppAdatper(getActivity(), list, mAllUrls));
 
         root.findViewById(R.id.web_app).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,7 +171,7 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
      * @param fragmentId   The android:id of this fragment in its activity's layout.
      * @param drawerLayout The DrawerLayout containing this fragment's UI.
      */
-    public void setUp(int fragmentId, DrawerLayout drawerLayout, ArrayList<String> names) {
+    public void setUp(int fragmentId, DrawerLayout drawerLayout, ArrayList<String> names, ArrayList<String> urls) {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
 
@@ -182,13 +180,15 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
         // set up the drawer's list view with items and click listener
         list.addAll(names);
         mStoredNames = names;
+        mAllUrls  = urls;
+        ((ArrayAdapter<String>)mDrawerListView.getAdapter()).notifyDataSetChanged();
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the navigation drawer and the action bar app icon.
-        mDrawerToggle = new ActionBarDrawerToggle(
+        mDrawerToggle = new ActionBarDrawerToggle(//
                 getActivity(),                    /* host Activity */
                 mDrawerLayout,                    /* DrawerLayout object */
                 R.drawable.ic_drawer,             /* nav drawer image to replace 'Up' caret */

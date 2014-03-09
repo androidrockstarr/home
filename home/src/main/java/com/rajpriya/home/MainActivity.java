@@ -39,7 +39,7 @@ public class MainActivity extends ActionBarActivity
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    private ArrayList<String> mUrls;
+    private ArrayList<String> mUrls = new ArrayList<String>();
     private Services mStoredServices;
 
     /**
@@ -65,11 +65,6 @@ public class MainActivity extends ActionBarActivity
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
-        // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout),
-                mStoredServices.getNames());
 
         mUrls = new ArrayList<String>();
         mUrls.add(getString(R.string.facebook_url));
@@ -78,6 +73,14 @@ public class MainActivity extends ActionBarActivity
         mUrls.add(getString(R.string.google_plus_url));
         mUrls.add(getString(R.string.google_translate_url));
         mUrls.add(getString(R.string.google_Search_url));
+        if (mStoredServices.getUrls()!=null)
+        mUrls.addAll(mStoredServices.getUrls());
+
+        // Set up the drawer.
+        mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout) findViewById(R.id.drawer_layout),
+                mStoredServices.getNames(), mUrls);
     }
 
 
