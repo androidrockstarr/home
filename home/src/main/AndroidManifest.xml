@@ -10,7 +10,7 @@
         <activity
             android:name="com.rajpriya.home.MainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,8 +22,14 @@
 
         <activity
             android:name="com.rajpriya.home.InstalledAppsActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_installed_apps" >
+            android:label="@string/title_activity_installed_apps"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.rajpriya.home.WebViewActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_web_view"
+            android:theme="@style/FullscreenTheme" >
         </activity>
     </application>
 

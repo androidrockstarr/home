@@ -30,9 +30,7 @@ import com.rajpriya.home.utils.Services;
 import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks, AddServiceDialog.EditNameDialogListener {
-
-    private static final String PREF_NEWLY_ADDED_SERVICES = "newly_added_web_apps";
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks{
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -40,7 +38,6 @@ public class MainActivity extends ActionBarActivity
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
     private ArrayList<String> mUrls = new ArrayList<String>();
-    private Services mStoredServices;
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -52,39 +49,18 @@ public class MainActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        Gson gson = new Gson();
-        String str = sp.getString(PREF_NEWLY_ADDED_SERVICES, null);
-        if (!TextUtils.isEmpty(str))
-            mStoredServices = gson.fromJson(str, Services.class);
-        else
-            mStoredServices = new Services();
-
 
                     mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
-
-
-        mUrls = new ArrayList<String>();
-        mUrls.add(getString(R.string.facebook_url));
-        mUrls.add(getString(R.string.twitter_url));
-        mUrls.add(getString(R.string.linkedin_url));
-        mUrls.add(getString(R.string.google_plus_url));
-        mUrls.add(getString(R.string.google_translate_url));
-        mUrls.add(getString(R.string.google_Search_url));
-        if (mStoredServices.getUrls()!=null)
-        mUrls.addAll(mStoredServices.getUrls());
-
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout),
-                mStoredServices.getNames(), mUrls);
+                (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
 
-    @Override
+/*    @Override
     public void onNewItemAdded(String url) {
         mUrls.add(url);
         mStoredServices.getUrls().add(url);
@@ -93,64 +69,63 @@ public class MainActivity extends ActionBarActivity
         Gson gson = new Gson();
         String str = gson.toJson(mStoredServices, Services.class);
         sp.edit().putString(PREF_NEWLY_ADDED_SERVICES, str).commit();
-    }
+    }*/
         @Override
     public void onNavigationDrawerItemSelected(int position) {
         getActionBar().hide();
-        // update the main content by replacing fragments
+/*        // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.container, PlaceholderFragment.newInstance(mUrls.get(position)))
-                .commit();
-
-/*        switch(position) {
+                .commit();*/
+            FragmentManager fragmentManager = getSupportFragmentManager();
+        switch(position) {
             case 0:
-
                  fragmentManager.beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance())
+                        .replace(R.id.container, WebAppsFragment.newInstance(getString(R.string.drawer_item1)))
                         .commit();
                 break;
 
             case 1:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance(getString(R.string.twitter_url)))
+                        .replace(R.id.container, PlaceholderFragment.newInstance(getString(R.string.drawer_item2)))
                                 .commit();
                 break;
             case 2:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance(getString(R.string.google_translate_url)))
+                        .replace(R.id.container, PlaceholderFragment.newInstance(getString(R.string.drawer_item3)))
                         .commit();
                 break;
             case 3:
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, PlaceholderFragment.newInstance(getString(R.string.google_plus_url)))
+                    .replace(R.id.container, PlaceholderFragment.newInstance(getString(R.string.drawer_item4)))
                     .commit();
             break;
             case 4:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance(getString(R.string.google_Search_url)))
+                        .replace(R.id.container, PlaceholderFragment.newInstance(getString(R.string.drawer_item5)))
                         .commit();
                 break;
             default:
-        }*/
+        }
     }
 
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_section1);
+                mTitle = getString(R.string.drawer_item1);
                 break;
             case 2:
-                mTitle = getString(R.string.title_section2);
+                mTitle = getString(R.string.drawer_item2);
                 break;
             case 3:
-                mTitle = getString(R.string.title_section3);
+                mTitle = getString(R.string.drawer_item3);
                 break;
             case 4:
-                mTitle = getString(R.string.title_section4);
+                mTitle = getString(R.string.drawer_item4);
                 break;
             case 5:
-                mTitle = getString(R.string.title_section5);
+                mTitle = getString(R.string.drawer_item5);
                 break;
         }
     }
@@ -221,11 +196,11 @@ public class MainActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
+/*    @Override
     public void onFinishEditDialog(String name, String url) {
         mNavigationDrawerFragment.onFinishEditDialog(name, url);
 
-    }
+    }*/
 
 
     /**
@@ -236,17 +211,16 @@ public class MainActivity extends ActionBarActivity
          * The fragment argument representing the section number for this
          * fragment.
          */
-        private static final String ARG_URL = "section_url";
-        private static final String ARG_SECTION_NUMBER = "section_number";
+        private static final String ARG_ITEM_NAME = "DRAWER_ITEM_NAME";
 
         /**
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(String url) {
+        public static PlaceholderFragment newInstance(String name) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
-            args.putString(ARG_URL, url);
+            args.putString(ARG_ITEM_NAME, name);
             fragment.setArguments(args);
 
             return fragment;
@@ -258,6 +232,7 @@ public class MainActivity extends ActionBarActivity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
+/*
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             WebView webView = (WebView) rootView.findViewById(R.id.section_label);
             webView.setWebViewClient(new WebViewClient() {
@@ -270,14 +245,19 @@ public class MainActivity extends ActionBarActivity
             webView.getSettings().setBuiltInZoomControls(true);
             webView.getSettings().setSupportZoom(true);
             webView.loadUrl(getArguments().getString(ARG_URL));
+*/
+            View rootView = inflater.inflate(R.layout.fragment_installed_apps, container, false);
+
+
             return rootView;
         }
 
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
+            ///TODO
+            /*((MainActivity) activity).onSectionAttached(
+                    getArguments().getInt(ARG_SECTION_NUMBER));*/
         }
     }
 

@@ -78,7 +78,7 @@ public class AddServiceDialog extends DialogFragment implements TextView.OnEdito
 
             // Return input text to activity
             //EditNameDialogListener activity = (EditNameDialogListener) getActivity();
-            mCaller.onFinishEditDialog(mEditTextName.getText().toString(), mEditTextUrl.getText().toString());
+            //mCaller.onFinishEditDialog(mEditTextName.getText().toString(), mEditTextUrl.getText().toString());
             this.dismiss();
             return true;
         }

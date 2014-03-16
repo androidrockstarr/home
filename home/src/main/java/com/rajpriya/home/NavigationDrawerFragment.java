@@ -35,7 +35,7 @@ import java.util.ArrayList;
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
-public class NavigationDrawerFragment extends Fragment implements AddServiceDialog.EditNameDialogListener {
+public class NavigationDrawerFragment extends Fragment  {
 
     /**
      * Remember the position of the selected item.
@@ -62,16 +62,10 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
     private View mFragmentContainerView;
-    private ArrayList<String> mStoredNames;
-    private ArrayList<String> mAllUrls;
 
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
-
-
-
-    final ArrayList<String> list = new ArrayList<String>();
 
 
     public NavigationDrawerFragment() {
@@ -92,7 +86,7 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
         }
 
         // Select either the default item (0) or the last selected item.
-        //selectItem(mCurrentSelectedPosition);
+        selectItem(mCurrentSelectedPosition);
 
     }
 
@@ -107,33 +101,29 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        View root =  inflater.inflate(
+        mDrawerListView = (ListView) inflater.inflate(
                 R.layout.fragment_navigation_drawer, container, false);
-
-        mDrawerListView = (ListView)root.findViewById(R.id.listview);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectItem(position);
             }
         });
+        mDrawerListView.setAdapter(new ArrayAdapter<String>(
+                getActionBar().getThemedContext(),
+                android.R.layout.simple_list_item_1,
+                android.R.id.text1,
+                new String[]{
+                        getActivity().getString(R.string.drawer_item1),
+                        getActivity().getString(R.string.drawer_item2),
+                        getActivity().getString(R.string.drawer_item3),
+                        getActivity().getString(R.string.drawer_item4),
+                        getActivity().getString(R.string.drawer_item5)
+                }));
+        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+        return mDrawerListView;
 
-        String[] values = new String[]{
-                getString(R.string.title_section1),
-                getString(R.string.title_section2),
-                getString(R.string.title_section3),
-                getString(R.string.title_section4),
-                getString(R.string.title_section5),
-                getString(R.string.title_section6)
-        };
-
-        for (int i = 0; i < values.length; ++i) {
-            list.add(values[i]);
-        }
-
-        mDrawerListView.setAdapter(new WebAppAdatper(getActivity(), list, mAllUrls));
-
-        root.findViewById(R.id.web_app).setOnClickListener(new View.OnClickListener() {
+        /*root.findViewById(R.id.web_app).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mDrawerListView.setVisibility(mDrawerListView.getVisibility() == View.GONE ?
@@ -154,11 +144,9 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getActivity(), InstalledAppsActivity.class));
-            }
-        });
+            }h
+        });*/
 
-        //mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-        return root;
     }
 
     public boolean isDrawerOpen() {
@@ -171,18 +159,14 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
      * @param fragmentId   The android:id of this fragment in its activity's layout.
      * @param drawerLayout The DrawerLayout containing this fragment's UI.
      */
-    public void setUp(int fragmentId, DrawerLayout drawerLayout, ArrayList<String> names, ArrayList<String> urls) {
+    public void setUp(int fragmentId, DrawerLayout drawerLayout) {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
 
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // set up the drawer's list view with items and click listener
-        list.addAll(names);
-        mStoredNames = names;
-        mAllUrls  = urls;
-        //((WebAppAdatper)mDrawerListView.getAdapter()).notifyDataSetChanged();
-        mDrawerListView.setAdapter(new WebAppAdatper(getActivity(), list, mAllUrls));
+
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
@@ -263,7 +247,7 @@ a*/
         }
     }
 
-    @Override
+/*    @Override
     public void onFinishEditDialog(String name, String url) {
 
         if (!mStoredNames.contains(name)) {
@@ -283,7 +267,7 @@ a*/
         }
 
 
-    }
+    }*/
 
     @Override
     public void onAttach(Activity activity) {
@@ -363,6 +347,6 @@ a*/
          */
         void onNavigationDrawerItemSelected(int position);
 
-        void onNewItemAdded(String url);
+        //void onNewItemAdded(String url);
     }
 }

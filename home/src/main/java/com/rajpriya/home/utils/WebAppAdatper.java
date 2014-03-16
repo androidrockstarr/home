@@ -1,6 +1,7 @@
 package com.rajpriya.home.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.rajpriya.home.R;
+import com.rajpriya.home.WebViewActivity;
 
 import java.net.NetworkInterface;
 import java.util.ArrayList;
@@ -79,12 +81,24 @@ public class WebAppAdatper extends BaseAdapter {
 
         root.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View arg0) {
+                
                 mNames.remove(position);
                 mUrls.remove(position);
                 notifyDataSetChanged();
                 return true;
             }
         });
+
+        root.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(context, WebViewActivity.class);
+                i.putExtra(WebViewActivity.WEB_URL, mUrls.get(position));
+                i.putExtra(WebViewActivity.NAME, mNames.get(position));
+                context.startActivity(i);
+            }
+        });
+
 
         return root;
     }
