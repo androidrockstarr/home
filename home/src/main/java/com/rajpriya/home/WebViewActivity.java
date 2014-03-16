@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -48,6 +49,7 @@ public class WebViewActivity extends Activity {
      * The instance of the {@link SystemUiHider} for this activity.
      */
     private SystemUiHider mSystemUiHider;
+    WebView contentView = null;
 
     private String mUrl;
     private String mName;
@@ -61,10 +63,12 @@ public class WebViewActivity extends Activity {
 
         if(getIntent() != null) {
             mUrl = getIntent().getStringExtra(WEB_URL);
+            mName = getIntent().getStringExtra(TITLE);
         }
 
         if(savedInstanceState != null) {
             mUrl = savedInstanceState.getString(WEB_URL);
+            mName = savedInstanceState.getString(TITLE);
         }
 
         if (TextUtils.isEmpty(mUrl)) {
@@ -73,9 +77,10 @@ public class WebViewActivity extends Activity {
 
 
         setContentView(R.layout.activity_web_view);
+        setTitle(mName);
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
-        final WebView contentView = (WebView)findViewById(R.id.web_view);
+        contentView = (WebView)findViewById(R.id.web_view);
 
         contentView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -190,5 +195,15 @@ public class WebViewActivity extends Activity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+
+    @Override
+    public void onBackPressed () {
+            if(contentView != null &&  contentView.canGoBack()) {
+                contentView.goBack();
+            } else
+                super.onBackPressed();
+
     }
 }

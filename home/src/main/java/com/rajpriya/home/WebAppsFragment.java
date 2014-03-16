@@ -9,7 +9,10 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
 import com.rajpriya.home.utils.Services;
@@ -62,26 +65,32 @@ public class WebAppsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-/*
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            WebView webView = (WebView) rootView.findViewById(R.id.section_label);
-            webView.setWebViewClient(new WebViewClient() {
-                public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                    view.loadUrl(url);
-                    return true;
-                }
-            });
-            webView.getSettings().setJavaScriptEnabled(true);
-            webView.getSettings().setBuiltInZoomControls(true);
-            webView.getSettings().setSupportZoom(true);
-            webView.loadUrl(getArguments().getString(ARG_URL));
-*/
+
         View rootView = inflater.inflate(R.layout.fragment_web_apps, container, false);
         GridView appGrid = (GridView)rootView.findViewById(R.id.appgrid);
         appGrid.setAdapter(new WebAppAdatper(getActivity(),
                                              mStoredServices.getNames(),
                                              mStoredServices.getUrls()));
+        final LinearLayout tools = (LinearLayout)rootView.findViewById(R.id.tools);
 
+        appGrid.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+                tools.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i2, int i3) {
+                tools.setVisibility(View.GONE);
+            }
+        });
+
+        ((ImageView)rootView.findViewById(R.id.add_service)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+
+            }
+        });
 
         return rootView;
     }

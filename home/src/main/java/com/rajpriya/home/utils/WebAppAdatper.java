@@ -94,7 +94,7 @@ public class WebAppAdatper extends BaseAdapter {
             public void onClick(View view) {
                 Intent i = new Intent(context, WebViewActivity.class);
                 i.putExtra(WebViewActivity.WEB_URL, mUrls.get(position));
-                i.putExtra(WebViewActivity.NAME, mNames.get(position));
+                i.putExtra(WebViewActivity.TITLE, mNames.get(position));
                 context.startActivity(i);
             }
         });
