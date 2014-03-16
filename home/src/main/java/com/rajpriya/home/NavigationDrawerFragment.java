@@ -181,7 +181,8 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
         list.addAll(names);
         mStoredNames = names;
         mAllUrls  = urls;
-        ((ArrayAdapter<String>)mDrawerListView.getAdapter()).notifyDataSetChanged();
+        //((WebAppAdatper)mDrawerListView.getAdapter()).notifyDataSetChanged();
+        mDrawerListView.setAdapter(new WebAppAdatper(getActivity(), list, mAllUrls));
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
@@ -257,7 +258,7 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
                 AddServiceDialog editNameDialog = new AddServiceDialog(this);
                 editNameDialog.show(fm, "fragment_edit_name");
             } else
-*/
+a*/
                 mCallbacks.onNavigationDrawerItemSelected(position);
         }
     }
@@ -272,10 +273,10 @@ public class NavigationDrawerFragment extends Fragment implements AddServiceDial
             return;
         }
 
-        ArrayAdapter<String> ar = ((ArrayAdapter<String>)mDrawerListView.getAdapter());
+        //ArrayAdapter<String> ar = ((ArrayAdapter<String>)mDrawerListView.getAdapter());
 
         list.add(name);
-        ((ArrayAdapter<String>)mDrawerListView.getAdapter()).notifyDataSetChanged();
+        ((WebAppAdatper)mDrawerListView.getAdapter()).notifyDataSetChanged();
 
         if (mCallbacks != null) {
                 mCallbacks.onNewItemAdded(url);

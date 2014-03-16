@@ -10,7 +10,7 @@
     <string name="title_section6">Google Search</string>
     <string name="title_add_service">Add your favourite</string>
     <string name="facebook_url">http://m.facebook.com</string>
-    <string name="twitter_url">http://m.twitter.com</string>
+    <string name="twitter_url">https://mobile.twitter.com</string>
     <string name="google_translate_url">http://translate.google.com/m</string>
     <string name="google_plus_url">https://plus.google.com/</string>
     <string name="google_Search_url">https://google.com/m</string>

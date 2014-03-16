@@ -24,7 +24,7 @@ import java.util.ArrayList;
 /**
  * Created by rajkumar on 3/9/14.
  */
-public class WebAppAdatper extends ArrayAdapter {
+public class WebAppAdatper extends BaseAdapter {
     private Context context;
     private ArrayList<String> mNames;
     private ArrayList<String> mUrls;
@@ -77,19 +77,21 @@ public class WebAppAdatper extends ArrayAdapter {
         //  gridView = (View) convertView;
         //}
 
-        /*gridView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Utils.showActionDialog(context, mApps.get(position).pname);
+        root.setOnLongClickListener(new View.OnLongClickListener() {
+            public boolean onLongClick(View arg0) {
+                mNames.remove(position);
+                mUrls.remove(position);
+                notifyDataSetChanged();
+                return true;
             }
-        });*/
+        });
 
         return root;
     }
 
     @Override
     public int getCount() {
-        return 4;
+        return mUrls==null?0:mUrls.size();
     }
 
     @Override
