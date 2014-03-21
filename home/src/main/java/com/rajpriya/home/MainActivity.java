@@ -25,7 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.rajpriya.home.utils.Services;
+import com.rajpriya.home.utils.StoredServices;
 
 import java.util.ArrayList;
 
@@ -146,7 +146,7 @@ public class MainActivity extends ActionBarActivity
         }
         else {
             FragmentManager fm = getSupportFragmentManager();
-            WebView wv = (WebView)((PlaceholderFragment)fm.findFragmentById(R.id.container)).getView().findViewById(R.id.section_label);
+            WebView wv = (WebView)((WebAppsFragment)fm.findFragmentById(R.id.container)).getView().findViewById(R.id.section_label);
             if(wv!=null &&  wv.canGoBack()) {
                 wv.goBack();
             } else

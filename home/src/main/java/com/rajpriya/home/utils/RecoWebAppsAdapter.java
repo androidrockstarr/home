@@ -26,23 +26,26 @@ import java.util.ArrayList;
 /**
  * Created by rajkumar on 3/9/14.
  */
-public class WebAppAdatper extends BaseAdapter {
+public class RecoWebAppsAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<String> mNames;
     private ArrayList<String> mUrls;
     private ImageLoader mImageLoader;
+    private ArrayList<String> mSelectedNames;
+    private ArrayList<String> mSelectedUrls;
 
-
-    public WebAppAdatper(Context context, ArrayList<String> names, ArrayList<String> urls, ImageLoader il) {
+    public RecoWebAppsAdapter(Context context, ImageLoader imageLoader) {
         this.context = context;
-        mNames = names;
-        mUrls = urls;
-        mImageLoader = il;
+        ReccomondedService rs = new ReccomondedService(context);
+        mNames = rs.getNames();
+        mUrls = rs.getUrls();
+        mImageLoader = imageLoader;
+        mSelectedNames = new ArrayList<String>();
+        mSelectedUrls = new ArrayList<String>();
 
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
-
 
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -65,28 +68,20 @@ public class WebAppAdatper extends BaseAdapter {
 
         imageView.setImageUrl(mUrls.get(position) + "/favicon.ico", mImageLoader);
 
-        convertView.setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View arg0) {
-                mNames.remove(position);
-                mUrls.remove(position);
-                notifyDataSetChanged();
-                return true;
-            }
-        });
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(context, WebViewActivity.class);
-                i.putExtra(WebViewActivity.WEB_URL, mUrls.get(position));
-                i.putExtra(WebViewActivity.TITLE, mNames.get(position));
-                context.startActivity(i);
+                view.setBackgroundColor(context.getResources().getColor(R.color.crystal_blue));
+                mSelectedUrls.add(mUrls.get(position));
+                mSelectedNames.add(mNames.get(position));
             }
         });
 
 
         return convertView;
     }
+
 
     @Override
     public int getCount() {
@@ -101,6 +96,14 @@ public class WebAppAdatper extends BaseAdapter {
     @Override
     public long getItemId(int position) {
         return 0;
+    }
+
+    public ArrayList<String> getSelectedNames() {
+        return mSelectedNames;
+    }
+
+    public ArrayList<String> getSelectedUrls() {
+        return mSelectedUrls;
     }
 
 }

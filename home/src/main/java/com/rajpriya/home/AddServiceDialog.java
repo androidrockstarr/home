@@ -6,6 +6,7 @@ package com.rajpriya.home;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,9 +30,10 @@ public class AddServiceDialog extends DialogFragment implements TextView.OnEdito
 
     private EditText mEditTextName;
     private EditText mEditTextUrl;
-    NavigationDrawerFragment mCaller;
+    private WebAppsFragment mCaller;
 
-    public AddServiceDialog(NavigationDrawerFragment caller) {
+
+    public AddServiceDialog(WebAppsFragment caller) {
         // Empty constructor required for DialogFragment
         mCaller  = caller;
     }
@@ -77,8 +79,8 @@ public class AddServiceDialog extends DialogFragment implements TextView.OnEdito
             }
 
             // Return input text to activity
-            //EditNameDialogListener activity = (EditNameDialogListener) getActivity();
-            //mCaller.onFinishEditDialog(mEditTextName.getText().toString(), mEditTextUrl.getText().toString());
+
+            mCaller.onFinishEditDialog(mEditTextName.getText().toString(), mEditTextUrl.getText().toString());
             this.dismiss();
             return true;
         }
