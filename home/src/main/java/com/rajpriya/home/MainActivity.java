@@ -87,9 +87,7 @@ public class MainActivity extends ActionBarActivity
                 break;
 
             case 1:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance(getString(R.string.drawer_item2)))
-                                .commit();
+                startActivity(new Intent(MainActivity.this, InstalledAppsActivity.class));
                 break;
             case 2:
                 fragmentManager.beginTransaction()

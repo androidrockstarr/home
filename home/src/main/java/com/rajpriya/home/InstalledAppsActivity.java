@@ -95,18 +95,6 @@ public class InstalledAppsActivity extends ActionBarActivity {
 
             final AsyncTask task = new FetchAppListTask(getActivity(), mV).execute();
 
-            mV.setOnScrollListener(new AbsListView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(AbsListView absListView, int i) {
-                    mT.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onScroll(AbsListView absListView, int i, int i2, int i3) {
-                    mT.setVisibility(View.GONE);
-                }
-            });
-
             ((ImageView)rootView.findViewById(R.id.order)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
@@ -136,11 +124,23 @@ public class InstalledAppsActivity extends ActionBarActivity {
             ((ImageView)rootView.findViewById(R.id.size)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Collections.sort(mApps, new Comparator<PInfo>() {
-                        public int compare(PInfo result1, PInfo result2) {
-                            return result1.size >  result2.size ? 1 : -1;
-                        }
-                    });
+                    if (view.isSelected()) {
+                        view.setSelected(false);
+                        Collections.sort(mApps, new Comparator<PInfo>() {
+                            public int compare(PInfo result1, PInfo result2) {
+                                return result1.size >  result2.size ? 1 : -1;
+                            }
+                        });
+                    } else {
+                        view.setSelected(true);
+                        Collections.sort(mApps, new Comparator<PInfo>() {
+                            public int compare(PInfo result1, PInfo result2) {
+                                return result1.size >  result2.size ? -1 : 1;
+                            }
+                        });
+                    }
+
+
                     ((AppAdapter)mV.getAdapter()).notifyDataSetChanged();
                     //return true;
                 }
@@ -165,8 +165,7 @@ public class InstalledAppsActivity extends ActionBarActivity {
             ((ImageView)rootView.findViewById(R.id.search)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                     //task.execute();
-                    //new FetchAppListTask(getActivity(), mV).execute();
+
                 }
             });
 
