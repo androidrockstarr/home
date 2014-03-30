@@ -61,12 +61,15 @@ public class RecoWebAppsAdapter extends BaseAdapter {
         TextView textView = (TextView) convertView
                 .findViewById(R.id.name);
         textView.setText(mNames.get(position));
+        textView.setTextColor(context.getResources().getColor(R.color.black));
 
         // set image based on selected text
         NetworkImageView imageView = (NetworkImageView) convertView
                 .findViewById(R.id.icon);
 
         imageView.setImageUrl(mUrls.get(position) + "/favicon.ico", mImageLoader);
+        imageView.setDefaultImageResId(R.drawable.webapp_default);
+        imageView.setErrorImageResId(R.drawable.webapp_default);
 
 
         convertView.setOnClickListener(new View.OnClickListener() {

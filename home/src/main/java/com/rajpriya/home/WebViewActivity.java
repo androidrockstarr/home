@@ -17,6 +17,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 
 /**
@@ -55,6 +56,7 @@ public class WebViewActivity extends Activity {
         }
 
         if (TextUtils.isEmpty(mUrl)) {
+            Toast.makeText(this, "URL of this webapp is invalid!!", Toast.LENGTH_LONG).show();
             finish();
         }
 

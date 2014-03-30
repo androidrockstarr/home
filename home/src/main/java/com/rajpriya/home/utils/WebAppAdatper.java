@@ -80,6 +80,8 @@ public class WebAppAdatper extends BaseAdapter implements Filterable{
                 .findViewById(R.id.icon);
 
         imageView.setImageUrl(mUrls.get(position) + "/favicon.ico", mImageLoader);
+        imageView.setDefaultImageResId(R.drawable.webapp_default);
+        imageView.setErrorImageResId(R.drawable.webapp_default);
 
         convertView.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View arg0) {

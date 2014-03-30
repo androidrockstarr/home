@@ -1,8 +1,10 @@
 package com.rajpriya.home;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -37,6 +39,7 @@ import android.widget.TextView;
 import com.rajpriya.home.utils.AppFilter;
 import com.rajpriya.home.utils.PInfo;
 import com.rajpriya.home.utils.Utils;
+import com.rajpriya.home.utils.WebAppAdatper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -98,6 +101,9 @@ public class InstalledAppsActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             c=getActivity();
+            boolean aplhaOrderSelected = false;
+            boolean sizeOrderSelected = false;
+
             final View rootView = inflater.inflate(R.layout.fragment_installed_apps, container, false);
             final EditText box = ((EditText)rootView.findViewById(R.id.search_box));
             mV = ((GridView)rootView.findViewById(R.id.appgrid));
@@ -105,73 +111,6 @@ public class InstalledAppsActivity extends ActionBarActivity {
             mV.setAdapter(new AppAdapter(getActivity() , mApps));
 
             final AsyncTask task = new FetchAppListTask(getActivity(), mV).execute();
-
-            ((ImageView)rootView.findViewById(R.id.order)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View view) {
-
-                    if (view.isSelected()) {
-                        view.setSelected(false);
-                    Collections.sort(mApps, new Comparator<PInfo>() {
-                        public int compare(PInfo result1, PInfo result2) {
-                           return result1.appname.compareTo(result2.appname);
-                        }
-                    });
-                    } else {
-                        view.setSelected(true);
-                        Collections.sort(mApps, new Comparator<PInfo>() {
-                            public int compare(PInfo result1, PInfo result2) {
-                                return result2.appname.compareTo(result1.appname);
-                            }
-                        });
-                    }
-
-
-                    ((AppAdapter)mV.getAdapter()).notifyDataSetChanged();
-                    //return true;
-                }
-            });
-
-            ((ImageView)rootView.findViewById(R.id.size)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (view.isSelected()) {
-                        view.setSelected(false);
-                        Collections.sort(mApps, new Comparator<PInfo>() {
-                            public int compare(PInfo result1, PInfo result2) {
-                                return result1.size >  result2.size ? 1 : -1;
-                            }
-                        });
-                    } else {
-                        view.setSelected(true);
-                        Collections.sort(mApps, new Comparator<PInfo>() {
-                            public int compare(PInfo result1, PInfo result2) {
-                                return result1.size >  result2.size ? -1 : 1;
-                            }
-                        });
-                    }
-
-
-                    ((AppAdapter)mV.getAdapter()).notifyDataSetChanged();
-                    //return true;
-                }
-            });
-
-            ((ImageView)rootView.findViewById(R.id.zoomin)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mV.setNumColumns(mV.getNumColumns() - 1);
-                    //return true;
-                }
-            });
-
-            ((ImageView)rootView.findViewById(R.id.zoomout)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mV.setNumColumns(mV.getNumColumns() + 1);
-                    //return true;
-                }
-            });
 
             ((ImageView)rootView.findViewById(R.id.btn_search)).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -187,10 +126,12 @@ public class InstalledAppsActivity extends ActionBarActivity {
             rootView.findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ((EditText)rootView.findViewById(R.id.search_box)).clearFocus();
+                    //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getActivity().getWindow().getCurrentFocus().getWindowToken(), 0);
+                    box.clearFocus();
+                    box.setText("");
                     rootView.findViewById(R.id.search_panel).setVisibility(View.GONE);
-                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    in.hideSoftInputFromWindow(box.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
                 }
             });
@@ -230,7 +171,91 @@ public class InstalledAppsActivity extends ActionBarActivity {
                             }
                             return false;
                         }
+                    }
+            );
+            rootView.findViewById(R.id.grid_size).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final CharSequence[] items = {" Increase "," Decrease "};
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("App Grid Size");
+                    builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int item) {
+                            switch(item)
+                            {
+                                case 0:
+                                    // Your code when first option seletced
+                                    mV.setNumColumns(mV.getNumColumns() - 1);
+                                    break;
+                                case 1:
+                                    // Your code when 2nd  option seletced
+                                    mV.setNumColumns(mV.getNumColumns() + 1);
+                                    break;
+                            }
+                            dialog.dismiss();
+                        }
                     });
+                    AlertDialog sortDialog = builder.create();
+                    sortDialog.show();
+                }
+            });
+
+            rootView.findViewById(R.id.order).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final CharSequence[] items = {" Alphabetically ",
+                                                  " Alphabetically Reverse",
+                                                  " App Size ",
+                                                  " App Size Reverse"};
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Sort Apps By");
+                    builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int item) {
+                            switch(item)
+                            {
+                                case 0:
+                                      Collections.sort(mApps, new Comparator<PInfo>() {
+                                            public int compare(PInfo result1, PInfo result2) {
+                                                return result1.appname.compareTo(result2.appname);
+                                            }
+                                        });
+                                      ((AppAdapter)mV.getAdapter()).notifyDataSetChanged();
+                                    break;
+                                case 1:
+                                      Collections.sort(mApps, new Comparator<PInfo>() {
+                                        public int compare(PInfo result1, PInfo result2) {
+                                            return result2.appname.compareTo(result1.appname);
+                                        }
+                                      });
+                                      ((AppAdapter)mV.getAdapter()).notifyDataSetChanged();
+                                    break;
+                                case 2:
+                                    Collections.sort(mApps, new Comparator<PInfo>() {
+                                        public int compare(PInfo result1, PInfo result2) {
+                                            return result1.size >  result2.size ? 1 : -1;
+                                        }
+                                    });
+                                    ((AppAdapter)mV.getAdapter()).notifyDataSetChanged();
+                                    break;
+                                case 3:
+                                    Collections.sort(mApps, new Comparator<PInfo>() {
+                                        public int compare(PInfo result1, PInfo result2) {
+                                            return result1.size >  result2.size ? -1 : 1;
+                                        }
+                                    });
+                                    ((AppAdapter)mV.getAdapter()).notifyDataSetChanged();
+                                    break;
+                                default:
+                                    break;
+                            }
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog sortDialog = builder.create();
+                    sortDialog.show();
+                }
+            });
 
             return rootView;
         }

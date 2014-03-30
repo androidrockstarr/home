@@ -128,6 +128,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Make your selection");
                 View rootView = inflater.inflate(R.layout.fragment_web_apps, container, false);
+                rootView.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
                 final GridView appGrid = (GridView)rootView.findViewById(R.id.appgrid);
                 appGrid.setSelector(R.drawable.selector_web_app_reco);
                 LinearLayout tools = (LinearLayout)rootView.findViewById(R.id.tools);
@@ -143,7 +144,8 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
                             if (!mStoredServices.getUrls().contains(selectedUrls.get(j))) {
                                 mStoredServices.getUrls().add(selectedUrls.get(j));
                                 mStoredServices.getNames().add(selectedNames.get(j));
-
+                                ((WebAppAdatper)mAppGridGlobal.getAdapter()).onNewWebAppAdded(selectedNames.get(j), selectedUrls.get(j));
+                                ((WebAppAdatper)mAppGridGlobal.getAdapter()).notifyDataSetChanged();
                             }
                         }
                         ((WebAppAdatper)mAppGrid.getAdapter()).notifyDataSetChanged();
@@ -296,6 +298,10 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
 
     @Override
     public void onFinishEditDialog(String name, String url) {
+        if (TextUtils.isEmpty(url) ||  TextUtils.isEmpty(name)) {
+            Toast.makeText(getActivity(), "Name of URL is empty!", Toast.LENGTH_LONG).show();
+            return;
+        }
         if (mStoredServices.getUrls().contains(url)) {
             Toast.makeText(getActivity(), "This URL is already registered!", Toast.LENGTH_LONG).show();
             return;
@@ -307,7 +313,6 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
 
         mStoredServices.getNames().add(name);
         mStoredServices.getUrls().add(url);
-        ((WebAppAdatper)mAppGridGlobal.getAdapter()).onNewWebAppAdded(name, url);
         ((WebAppAdatper)mAppGridGlobal.getAdapter()).notifyDataSetChanged();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         Gson gson = new Gson();
