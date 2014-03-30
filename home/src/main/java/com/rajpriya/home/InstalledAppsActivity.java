@@ -13,19 +13,29 @@ import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.rajpriya.home.utils.AppFilter;
+import com.rajpriya.home.utils.PInfo;
 import com.rajpriya.home.utils.Utils;
 
 import java.io.File;
@@ -88,7 +98,8 @@ public class InstalledAppsActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             c=getActivity();
-            View rootView = inflater.inflate(R.layout.fragment_installed_apps, container, false);
+            final View rootView = inflater.inflate(R.layout.fragment_installed_apps, container, false);
+            final EditText box = ((EditText)rootView.findViewById(R.id.search_box));
             mV = ((GridView)rootView.findViewById(R.id.appgrid));
             mT = ((LinearLayout)rootView.findViewById(R.id.tools));
             mV.setAdapter(new AppAdapter(getActivity() , mApps));
@@ -162,32 +173,69 @@ public class InstalledAppsActivity extends ActionBarActivity {
                 }
             });
 
-            ((ImageView)rootView.findViewById(R.id.search)).setOnClickListener(new View.OnClickListener() {
+            ((ImageView)rootView.findViewById(R.id.btn_search)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    rootView.findViewById(R.id.search_panel).setVisibility(View.VISIBLE);
+                    ((EditText)rootView.findViewById(R.id.search_box)).requestFocus();
+                    InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.toggleSoftInputFromWindow(box.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
 
                 }
             });
 
+            rootView.findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((EditText)rootView.findViewById(R.id.search_box)).clearFocus();
+                    rootView.findViewById(R.id.search_panel).setVisibility(View.GONE);
+                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    in.hideSoftInputFromWindow(box.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
+                }
+            });
 
+            ((EditText)rootView.findViewById(R.id.search_box)).addTextChangedListener(new TextWatcher() {
 
+                @Override
+                public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                    // When user changed the Text
+                    ((AppAdapter)mV.getAdapter()).getFilter().filter(cs);
+                }
+
+                @Override
+                public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+                                              int arg3) {
+                    // TODO Auto-generated method stub
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable arg0) {
+                    // TODO Auto-generated method stub
+                }
+            });
+
+            box.setOnEditorActionListener(
+                    new EditText.OnEditorActionListener() {
+                        @Override
+                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                                    actionId == EditorInfo.IME_ACTION_DONE ||
+                                    event.getAction() == KeyEvent.ACTION_DOWN &&
+                                            event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                                InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                                in.hideSoftInputFromWindow(box.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                                return true;
+                            }
+                            return false;
+                        }
+                    });
 
             return rootView;
         }
     }
 
-    class PInfo {
-        private String appname = "";
-        private String pname = "";
-        private String versionName = "";
-        private int versionCode = 0;
-        private Drawable icon;
-        private double size;
-        private void prettyPrint() {
-            Log.e("rajpriya", appname + "\t" + pname + "\t" + versionName + "\t" + versionCode);
-        }
-    }
 
     private ArrayList<PInfo> getPackages() {
         ArrayList<PInfo> apps = getInstalledApps(false); /* false = no system packages */
@@ -230,14 +278,16 @@ public class InstalledAppsActivity extends ActionBarActivity {
     }
 
 
-    public class AppAdapter extends BaseAdapter {
+    public class AppAdapter extends BaseAdapter implements Filterable{
         private Context context;
-        private ArrayList<PInfo> mApps;
+        public ArrayList<PInfo> mApps;
+        private Filter appFilter;
 
 
         public AppAdapter(Context context, ArrayList<PInfo> apps) {
             this.context = context;
             mApps = apps;
+            appFilter = new AppFilter(mApps, this);
 
         }
 
@@ -295,6 +345,12 @@ public class InstalledAppsActivity extends ActionBarActivity {
             return 0;
         }
 
+        @Override
+        public Filter getFilter() {
+            if(appFilter == null)
+            return  new AppFilter(mApps, this);
+            else return appFilter;
+        }
     }
 
 

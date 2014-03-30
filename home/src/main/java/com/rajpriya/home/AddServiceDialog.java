@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -70,11 +71,12 @@ public class AddServiceDialog extends DialogFragment implements TextView.OnEdito
                 //conn.connect();
             } catch (MalformedURLException e) {
                 // the URL is not in a valid form
-                mEditTextUrl.append("    INVALID URL: Please correct it");
+                //mEditTextUrl.append("    INVALID URL: Please correct it");
+                Toast.makeText(getActivity(), "Entered URL seems invalid, please correct", Toast.LENGTH_LONG).show();
                 return false;
             } catch (IOException e) {
                 // the connection couldn't be established
-                mEditTextUrl.append("  Cant establish connection with this URL, please correct");
+                Toast.makeText(getActivity(), "Cant establish connection with this URL, please correct", Toast.LENGTH_LONG).show();
                 return false;
             }
 

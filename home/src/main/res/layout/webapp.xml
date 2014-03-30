@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="90dp"
-    android:background="@drawable/border">
+    android:layout_height="90dp">
 
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/icon"
@@ -13,8 +12,8 @@
 
     <TextView
         android:id="@+id/name"
-        android:background="#cccc"
         android:lines="2"
+        android:textColor="#FFFFFF"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:gravity="center"

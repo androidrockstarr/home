@@ -11,6 +11,7 @@
         android:id="@+id/service_name"
         android:layout_width="match_parent"  android:layout_height="wrap_content"
         android:inputType="text"
+        android:hint="Name"
         android:imeOptions="actionNext" />
 
     <TextView
@@ -22,6 +23,7 @@
         android:id="@+id/service_url"
         android:layout_width="match_parent"  android:layout_height="wrap_content"
         android:inputType="text"
+        android:hint="URL e.x. www.m.facebook.com"
         android:imeOptions="actionDone"
         android:text="http://www..com"/>
 
