@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.Settings;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
@@ -34,8 +36,13 @@ import android.widget.Filterable;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.rajpriya.home.admob.ToastAdListener;
 import com.rajpriya.home.utils.AppFilter;
 import com.rajpriya.home.utils.PInfo;
 import com.rajpriya.home.utils.Utils;
@@ -48,6 +55,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class InstalledAppsActivity extends ActionBarActivity {
+    private AdView mAdView;
 
     private  static ArrayList<PInfo>  mApps;
     @Override
@@ -80,12 +88,27 @@ public class InstalledAppsActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_full_screen) {
+            if(getSupportActionBar() != null) {
+                getSupportActionBar().hide();
+                return true;
+            } else {
+                return false;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed () {
+        if (!getSupportActionBar().isShowing()) {
+            getSupportActionBar().show();
+            //mNavigationDrawerFragment.setMenuVisibility(true);
+        }
+        else {
+            super.onBackPressed();
+        }
+    }
     /**
      * A placeholder fragment containing a simple view.
      */
@@ -101,8 +124,6 @@ public class InstalledAppsActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             c=getActivity();
-            boolean aplhaOrderSelected = false;
-            boolean sizeOrderSelected = false;
 
             final View rootView = inflater.inflate(R.layout.fragment_installed_apps, container, false);
             final EditText box = ((EditText)rootView.findViewById(R.id.search_box));
@@ -111,6 +132,29 @@ public class InstalledAppsActivity extends ActionBarActivity {
             mV.setAdapter(new AppAdapter(getActivity() , mApps));
 
             final AsyncTask task = new FetchAppListTask(getActivity(), mV).execute();
+
+            // Create an ad.
+            mAdView = new AdView(getActivity());
+            mAdView.setBackgroundColor(getResources().getColor(R.color.white));
+            mAdView.setAdSize(AdSize.BANNER);
+            mAdView.setAdUnitId(getActivity().getResources().getString(R.string.ad_unit_id));
+
+            // Add the AdView to the view hierarchy. The view will have no size
+            // until the ad is loaded.
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            ((LinearLayout) rootView).addView(mAdView, 1, params);
+
+            // Create an ad request. Check logcat output for the hashed device ID to
+            // get test ads on a physical device.
+            AdRequest adRequest = new AdRequest.Builder()
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    .addTestDevice("2B5FCE7F5371A6FE3457055EA04FDA8E")
+                    .build();
+
+            // Start loading the ad in the background.
+            mAdView.loadAd(adRequest);
+
 
             ((ImageView)rootView.findViewById(R.id.btn_search)).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -216,10 +260,10 @@ public class InstalledAppsActivity extends ActionBarActivity {
                             {
                                 case 0:
                                       Collections.sort(mApps, new Comparator<PInfo>() {
-                                            public int compare(PInfo result1, PInfo result2) {
-                                                return result1.appname.compareTo(result2.appname);
-                                            }
-                                        });
+                                          public int compare(PInfo result1, PInfo result2) {
+                                              return result1.appname.compareTo(result2.appname);
+                                          }
+                                      });
                                       ((AppAdapter)mV.getAdapter()).notifyDataSetChanged();
                                     break;
                                 case 1:
@@ -414,5 +458,21 @@ public class InstalledAppsActivity extends ActionBarActivity {
         }
 
     }
+    @Override
+    protected void onPause() {
+        mAdView.pause();
+        super.onPause();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mAdView.resume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mAdView.destroy();
+        super.onDestroy();
+    }
 }

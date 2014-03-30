@@ -92,7 +92,7 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 2:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance(getString(R.string.drawer_item3)))
+                        .replace(R.id.container, SettingsFragment.newInstance())
                         .commit();
                 break;
             case 3:
@@ -142,8 +142,8 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onBackPressed () {
-        if (!getActionBar().isShowing()) {
-            getActionBar().show();
+        if (!getSupportActionBar().isShowing()) {
+            getSupportActionBar().show();
             //mNavigationDrawerFragment.setMenuVisibility(true);
         }
         else {
@@ -187,13 +187,17 @@ public class MainActivity extends ActionBarActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_full_screen) {
             /*FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, SettingsFragment.newInstance())
                     .commit();*/
             //startActivity(new Intent(this, InstalledAppsActivity.class));
+            if(getSupportActionBar() != null) {
+                getSupportActionBar().hide();
             return true;
+            } else
+                return false;
         }
         return super.onOptionsItemSelected(item);
     }
