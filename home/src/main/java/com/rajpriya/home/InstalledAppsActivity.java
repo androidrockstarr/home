@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -44,6 +45,7 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.rajpriya.home.admob.ToastAdListener;
 import com.rajpriya.home.utils.AppFilter;
+import com.rajpriya.home.utils.ImageHelper;
 import com.rajpriya.home.utils.PInfo;
 import com.rajpriya.home.utils.Utils;
 import com.rajpriya.home.utils.WebAppAdatper;
@@ -385,8 +387,9 @@ public class InstalledAppsActivity extends ActionBarActivity {
                 // set image based on selected text
                 ImageView imageView = (ImageView) gridView
                         .findViewById(R.id.icon);
-
-                imageView.setImageDrawable(mApps.get(position).icon);
+            imageView.setImageDrawable(mApps.get(position).icon);
+            imageView.setImageBitmap(ImageHelper.getRoundedCornerBitmap(((BitmapDrawable) imageView.getDrawable()).getBitmap(), 84));
+            imageView.invalidate();
 
             //} else {
               //  gridView = (View) convertView;
