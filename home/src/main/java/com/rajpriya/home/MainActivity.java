@@ -73,7 +73,7 @@ public class MainActivity extends ActionBarActivity
     }*/
         @Override
     public void onNavigationDrawerItemSelected(int position) {
-        getActionBar().hide();
+        getSupportActionBar().hide();
 /*        // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -147,12 +147,15 @@ public class MainActivity extends ActionBarActivity
             //mNavigationDrawerFragment.setMenuVisibility(true);
         }
         else {
-            FragmentManager fm = getSupportFragmentManager();
-            WebView wv = (WebView)((WebAppsFragment)fm.findFragmentById(R.id.container)).getView().findViewById(R.id.section_label);
-            if(wv!=null &&  wv.canGoBack()) {
-                wv.goBack();
-            } else
-                super.onBackPressed();
+                FragmentManager fm = getSupportFragmentManager();
+                Fragment frag = fm.findFragmentById(R.id.container);
+                if (frag instanceof  WebAppsFragment) {
+                    WebView wv = (WebView)frag.getView().findViewById(R.id.section_label);
+                    if(wv != null &&  wv.canGoBack()) {
+                        wv.goBack();
+                    } else
+                        super.onBackPressed();
+                }
             }
     }
 
@@ -160,8 +163,8 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onResume () {
         super.onResume();
-        if (!getActionBar().isShowing()) {
-            getActionBar().show();
+        if (!getSupportActionBar().isShowing()) {
+            getSupportActionBar().show();
             //mNavigationDrawerFragment.setMenuVisibility(true);
         }
 //        else

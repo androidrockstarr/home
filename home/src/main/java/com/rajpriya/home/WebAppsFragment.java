@@ -59,16 +59,20 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
      */
     private static final String ARG_ITEM_NAME = "DRAWER_ITEM_NAME";
     private static final String PREF_STORED_SERVICES = "rajpriya_stored_added_web_apps";
+    private static final String NUM_COLUMNS = "number_of_columns_in_gridView";
 
     private StoredServices mStoredServices;
     private ImageLoader mImageLoader;
     private GridView mAppGridGlobal;
+    private static int mNumGridCols;
 
     /**
      * Returns a new instance of this fragment for the given section
      * number.
      */
     public static WebAppsFragment newInstance(String name) {
+
+        mNumGridCols = 3;
         WebAppsFragment fragment = new WebAppsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_ITEM_NAME, name);
@@ -83,6 +87,9 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
     @Override
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
+        if(savedInstance !=null) {
+            mNumGridCols = savedInstance.getInt(NUM_COLUMNS);
+        }
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         Gson gson = new Gson();
         String str = sp.getString(PREF_STORED_SERVICES, null);
@@ -104,6 +111,11 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(NUM_COLUMNS, mNumGridCols);
+    }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
@@ -200,11 +212,12 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
                         {
                             case 0:
                                 // Your code when first option seletced
-                                mAppGrid.setNumColumns(mAppGrid.getNumColumns() - 1);
+                                if (mNumGridCols > 1)
+                                    mAppGrid.setNumColumns(--mNumGridCols);
                                 break;
                             case 1:
                                 // Your code when 2nd  option seletced
-                                mAppGrid.setNumColumns(mAppGrid.getNumColumns() + 1);
+                                mAppGrid.setNumColumns(++mNumGridCols);
                                 break;
                         }
                         dialog.dismiss();

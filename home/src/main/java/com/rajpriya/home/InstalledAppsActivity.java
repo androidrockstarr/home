@@ -116,8 +116,11 @@ public class InstalledAppsActivity extends ActionBarActivity {
         private GridView mV;
         private LinearLayout mT;
         private Context c;
+        private int mGridColumns;
 
         public PlaceholderFragment() {
+            //Lower end devices dont support getNumColumns
+            mGridColumns = 3;
         }
 
         @Override
@@ -228,12 +231,12 @@ public class InstalledAppsActivity extends ActionBarActivity {
                             switch(item)
                             {
                                 case 0:
-                                    // Your code when first option seletced
-                                    mV.setNumColumns(mV.getNumColumns() - 1);
+                                    if(mGridColumns > 1) {
+                                        mV.setNumColumns(--mGridColumns);
+                                    }
                                     break;
                                 case 1:
-                                    // Your code when 2nd  option seletced
-                                    mV.setNumColumns(mV.getNumColumns() + 1);
+                                    mV.setNumColumns(++mGridColumns);
                                     break;
                             }
                             dialog.dismiss();
@@ -460,19 +463,22 @@ public class InstalledAppsActivity extends ActionBarActivity {
     }
     @Override
     protected void onPause() {
-        mAdView.pause();
+        if (mAdView != null)
+            mAdView.pause();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
+        if (mAdView != null)
+            mAdView.resume();
         super.onResume();
-        mAdView.resume();
     }
 
     @Override
     protected void onDestroy() {
-        mAdView.destroy();
+        if (mAdView != null)
+            mAdView.destroy();
         super.onDestroy();
     }
 }

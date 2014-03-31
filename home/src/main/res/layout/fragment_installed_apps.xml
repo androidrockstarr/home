@@ -9,7 +9,7 @@
         android:layout_height="wrap_content">
         <LinearLayout
             android:id="@+id/tools"
-            android:background="#cccc"
+            android:background="#FFFFFF"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
@@ -19,7 +19,7 @@
                 android:id="@+id/order"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Sort By"
+                android:text="Sort"
                 android:layout_height="50dp"
                 android:layout_width="0dp"/>
             <TextView
@@ -32,7 +32,7 @@
 
             <ImageView
                 android:id="@+id/btn_search"
-                android:src="@android:drawable/menu_full_frame"
+                android:src="@android:drawable/ic_menu_search"
                 android:scaleType="centerInside"
                 android:layout_weight="1"
                 android:layout_height="53dp"

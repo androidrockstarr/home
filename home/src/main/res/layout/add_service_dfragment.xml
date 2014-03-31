@@ -25,7 +25,7 @@
         android:inputType="text"
         android:hint="URL e.x. www.m.facebook.com"
         android:imeOptions="actionDone"
-        android:text="http://www..com"/>
+        android:text="http://www.m..com"/>
 
 
 </LinearLayout>
