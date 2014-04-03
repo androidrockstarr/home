@@ -10,11 +10,15 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.LruCache;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -47,6 +51,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.Inflater;
 
 /**
  * Created by rajkumar on 3/16/14.
@@ -65,6 +70,8 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
     private ImageLoader mImageLoader;
     private GridView mAppGridGlobal;
     private static int mNumGridCols;
+    private boolean mSortReverseAlpha;
+    private EditText mSearchBox;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -72,11 +79,12 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
      */
     public static WebAppsFragment newInstance(String name) {
 
-        mNumGridCols = 3;
+        mNumGridCols = 2;
         WebAppsFragment fragment = new WebAppsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_ITEM_NAME, name);
         fragment.setArguments(args);
+        fragment.setHasOptionsMenu(true);
 
         return fragment;
     }
@@ -108,6 +116,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
                 return mCache.get(url);
             }
         });
+        mSortReverseAlpha = false;
 
     }
 
@@ -116,6 +125,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
         super.onSaveInstanceState(outState);
         outState.putInt(NUM_COLUMNS, mNumGridCols);
     }
+
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
@@ -130,114 +140,8 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
 
 
 
-        final EditText box = ((EditText)rootView.findViewById(R.id.search_box));
-        final LinearLayout tools = (LinearLayout)rootView.findViewById(R.id.tools);
-        ImageView addButton = (ImageView)rootView.findViewById(R.id.add_service);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-            //Display service list fragment
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Make your selection");
-                View rootView = inflater.inflate(R.layout.fragment_web_apps, container, false);
-                rootView.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
-                final GridView appGrid = (GridView)rootView.findViewById(R.id.appgrid);
-                appGrid.setSelector(R.drawable.selector_web_app_reco);
-                LinearLayout tools = (LinearLayout)rootView.findViewById(R.id.tools);
-                tools.setVisibility(View.GONE);
-                appGrid.setAdapter(new RecoWebAppsAdapter(getActivity(), mImageLoader));
-                builder.setView(rootView);
-                builder.setPositiveButton("Add Selected", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        ArrayList<String> selectedUrls = ((RecoWebAppsAdapter)appGrid.getAdapter()).getSelectedUrls();
-                        ArrayList<String> selectedNames = ((RecoWebAppsAdapter)appGrid.getAdapter()).getSelectedNames();
-                        for (int j=0; j<selectedUrls.size(); j++) {
-                            if (!mStoredServices.getUrls().contains(selectedUrls.get(j))) {
-                                mStoredServices.getUrls().add(selectedUrls.get(j));
-                                mStoredServices.getNames().add(selectedNames.get(j));
-                                ((WebAppAdatper)mAppGridGlobal.getAdapter()).onNewWebAppAdded(selectedNames.get(j), selectedUrls.get(j));
-                                ((WebAppAdatper)mAppGridGlobal.getAdapter()).notifyDataSetChanged();
-                            }
-                        }
-                        ((WebAppAdatper)mAppGrid.getAdapter()).notifyDataSetChanged();
-                        dialogInterface.dismiss();
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
-                builder.setNeutralButton("Add New", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        AddServiceDialog dialog = new AddServiceDialog(WebAppsFragment.this);
-                        dialog.show(getFragmentManager(), "dialog");
-                        dialogInterface.dismiss();
-                    }
-                });
+        mSearchBox = ((EditText)rootView.findViewById(R.id.search_box));
 
-                AlertDialog alert = builder.create();
-                alert.show();
-
-            }
-        });
-
-        ((ImageView)rootView.findViewById(R.id.order)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (view.isSelected()) {
-                    view.setSelected(false);
-                    ((WebAppAdatper)mAppGrid.getAdapter()).sortAlphabetically1();
-                } else {
-                    view.setSelected(true);
-                    ((WebAppAdatper)mAppGrid.getAdapter()).sortAlphabetically2();
-                }
-                ((WebAppAdatper)mAppGrid.getAdapter()).notifyDataSetChanged();
-            }
-
-        });
-
-        rootView.findViewById(R.id.grid_size).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final CharSequence[] items = {" Increase "," Decrease "};
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("App Grid Size");
-                builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        switch(item)
-                        {
-                            case 0:
-                                // Your code when first option seletced
-                                if (mNumGridCols > 1)
-                                    mAppGrid.setNumColumns(--mNumGridCols);
-                                break;
-                            case 1:
-                                // Your code when 2nd  option seletced
-                                mAppGrid.setNumColumns(++mNumGridCols);
-                                break;
-                        }
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog sortDialog = builder.create();
-                sortDialog.show();
-            }
-        });
-
-        ((ImageView)rootView.findViewById(R.id.btn_search)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                rootView.findViewById(R.id.search_panel).setVisibility(View.VISIBLE);
-                ((EditText)rootView.findViewById(R.id.search_box)).requestFocus();
-                InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInputFromWindow(box.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
-
-            }
-        });
 
         rootView.findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -245,19 +149,18 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
                 //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(getActivity().getWindow().getCurrentFocus().getWindowToken(), 0);
-                box.clearFocus();
-                box.setText("");
+                mSearchBox.clearFocus();
+                mSearchBox.setText("");
                 rootView.findViewById(R.id.search_panel).setVisibility(View.GONE);
 
             }
         });
 
-        ((EditText)rootView.findViewById(R.id.search_box)).addTextChangedListener(new TextWatcher() {
-
+        mSearchBox.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
                 // When user changed the Text
-                ((WebAppAdatper)mAppGrid.getAdapter()).getFilter().filter(cs);
+                ((WebAppAdatper) mAppGrid.getAdapter()).getFilter().filter(cs);
             }
 
             @Override
@@ -273,7 +176,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
             }
         });
 
-        box.setOnEditorActionListener(
+        mSearchBox.setOnEditorActionListener(
                 new EditText.OnEditorActionListener() {
                     @Override
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -282,7 +185,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
                                 event.getAction() == KeyEvent.ACTION_DOWN &&
                                         event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                             InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            in.hideSoftInputFromWindow(box.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                            in.hideSoftInputFromWindow(mSearchBox.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                             return true;
                         }
                         return false;
@@ -298,6 +201,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
         ///TODO
             /*((MainActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));*/
+        ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Bookmarks");
     }
 
     @Override
@@ -307,6 +211,42 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
         Gson gson = new Gson();
         sp.edit().putString(PREF_STORED_SERVICES, gson.toJson(mStoredServices)).commit();
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.web_app, menu);
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        switch(id) {
+            case R.id.action_add:
+                displayAddNewServiceDlg(getActivity().getLayoutInflater(), mAppGridGlobal);
+                return true;
+            case R.id.action_sort:
+                if (mSortReverseAlpha) {
+                    sortAppsAlphabetically(false, mAppGridGlobal);
+                    mSortReverseAlpha = false;
+                } else {
+                    sortAppsAlphabetically(true, mAppGridGlobal);
+                    mSortReverseAlpha = true;
+                }
+                return true;
+            case R.id.action_grid_size:
+                changeGridSize(mAppGridGlobal);
+                return true;
+            case R.id.action_search:
+                displaySearchBox();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -333,5 +273,98 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
 
     }
 
+    private void displayAddNewServiceDlg(LayoutInflater i, final GridView g) {
+        //Display service list fragment
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Make your selection");
+        View rootView = i.inflate(R.layout.fragment_web_apps, null, false);
+        rootView.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
+        final GridView appGrid = (GridView)rootView.findViewById(R.id.appgrid);
+        appGrid.setSelector(R.drawable.selector_web_app_reco);
 
+        appGrid.setAdapter(new RecoWebAppsAdapter(getActivity(), mImageLoader));
+        builder.setView(rootView);
+        builder.setPositiveButton("Add Selected", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                ArrayList<String> selectedUrls = ((RecoWebAppsAdapter)appGrid.getAdapter()).getSelectedUrls();
+                ArrayList<String> selectedNames = ((RecoWebAppsAdapter)appGrid.getAdapter()).getSelectedNames();
+                for (int j=0; j<selectedUrls.size(); j++) {
+                    if (!mStoredServices.getUrls().contains(selectedUrls.get(j))) {
+                        mStoredServices.getUrls().add(selectedUrls.get(j));
+                        mStoredServices.getNames().add(selectedNames.get(j));
+                        ((WebAppAdatper)mAppGridGlobal.getAdapter()).onNewWebAppAdded(selectedNames.get(j), selectedUrls.get(j));
+                        ((WebAppAdatper)mAppGridGlobal.getAdapter()).notifyDataSetChanged();
+                    }
+                }
+                ((WebAppAdatper)g.getAdapter()).notifyDataSetChanged();
+                dialogInterface.dismiss();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        builder.setNeutralButton("Add New", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                AddServiceDialog dialog = new AddServiceDialog(WebAppsFragment.this);
+                dialog.show(getFragmentManager(), "dialog");
+                dialogInterface.dismiss();
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.show();
+
+    }
+
+    private void sortAppsAlphabetically(boolean reverse, GridView g) {
+        if (reverse) {
+            ((WebAppAdatper)g.getAdapter()).sortAlphabetically1();
+        } else {
+            ((WebAppAdatper)g.getAdapter()).sortAlphabetically2();
+        }
+        ((WebAppAdatper)g.getAdapter()).notifyDataSetChanged();
+
+    }
+
+    private void changeGridSize(final GridView g) {
+        final CharSequence[] items = {" Increase "," Decrease "};
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("App Grid Size");
+        builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch(item)
+                {
+                    case 0:
+                        // Your code when first option seletced
+                        if (mNumGridCols > 1)
+                            g.setNumColumns(--mNumGridCols);
+                        break;
+                    case 1:
+                        // Your code when 2nd  option seletced
+                        g.setNumColumns(++mNumGridCols);
+                        break;
+                }
+                dialog.dismiss();
+            }
+        });
+        AlertDialog sortDialog = builder.create();
+        sortDialog.show();
+    }
+
+    private void displaySearchBox() {
+        if (getActivity().findViewById(R.id.search_panel).getVisibility() == View.VISIBLE) {
+            return;        }
+
+        getActivity().findViewById(R.id.search_panel).setVisibility(View.VISIBLE);
+        mSearchBox.requestFocus();
+        InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInputFromWindow(mSearchBox.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+
+    }
 }
+
