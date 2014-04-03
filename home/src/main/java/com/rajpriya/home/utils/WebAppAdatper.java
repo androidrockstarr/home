@@ -128,7 +128,7 @@ public class WebAppAdatper extends BaseAdapter implements Filterable{
     public void sortAlphabetically1() {
         Collections.sort(mNames, new Comparator<String>() {
             public int compare(String s1, String s2) {
-                return s1.compareTo(s2);
+                return s1.compareToIgnoreCase(s2);
             }
         });
         correctUrlsOrder();
@@ -137,7 +137,7 @@ public class WebAppAdatper extends BaseAdapter implements Filterable{
     public void sortAlphabetically2() {
         Collections.sort(mNames, new Comparator<String>() {
             public int compare(String s1, String s2) {
-                return s2.compareTo(s1);
+                return s2.compareToIgnoreCase(s1);
             }
         });
         correctUrlsOrder();

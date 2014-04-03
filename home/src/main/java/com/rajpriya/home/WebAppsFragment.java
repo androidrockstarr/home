@@ -65,6 +65,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
     private static final String ARG_ITEM_NAME = "DRAWER_ITEM_NAME";
     private static final String PREF_STORED_SERVICES = "rajpriya_stored_added_web_apps";
     private static final String NUM_COLUMNS = "number_of_columns_in_gridView";
+    private static final String SORT_ORDER = "current_sort_order_of_grid_items";
 
     private StoredServices mStoredServices;
     private ImageLoader mImageLoader;
@@ -79,7 +80,6 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
      */
     public static WebAppsFragment newInstance(String name) {
 
-        mNumGridCols = 2;
         WebAppsFragment fragment = new WebAppsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_ITEM_NAME, name);
@@ -95,10 +95,15 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
     @Override
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
-        if(savedInstance !=null) {
-            mNumGridCols = savedInstance.getInt(NUM_COLUMNS);
-        }
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        if(savedInstance != null) {
+            mNumGridCols = savedInstance.getInt(NUM_COLUMNS, 3);
+            mSortReverseAlpha = savedInstance.getBoolean(SORT_ORDER, false);
+        } else {
+            mNumGridCols = sp.getInt(NUM_COLUMNS, 3);
+            mSortReverseAlpha = sp.getBoolean(SORT_ORDER, false);
+        }
+
         Gson gson = new Gson();
         String str = sp.getString(PREF_STORED_SERVICES, null);
         if (!TextUtils.isEmpty(str))
@@ -116,7 +121,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
                 return mCache.get(url);
             }
         });
-        mSortReverseAlpha = false;
+
 
     }
 
@@ -124,6 +129,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(NUM_COLUMNS, mNumGridCols);
+        outState.putBoolean(SORT_ORDER, mSortReverseAlpha);
     }
 
 
@@ -139,7 +145,8 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
                                              mStoredServices.getUrls(), mImageLoader));
 
 
-
+        sortAppsAlphabetically(mSortReverseAlpha, mAppGridGlobal);
+        mAppGridGlobal.setNumColumns(mNumGridCols);
         mSearchBox = ((EditText)rootView.findViewById(R.id.search_box));
 
 
@@ -201,7 +208,10 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
         ///TODO
             /*((MainActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));*/
-        ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Bookmarks");
+        if(((ActionBarActivity)activity).getSupportActionBar() != null) {
+            ((ActionBarActivity)activity).getSupportActionBar().setTitle("Bookmarks");
+        }
+
     }
 
     @Override
@@ -210,6 +220,8 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         Gson gson = new Gson();
         sp.edit().putString(PREF_STORED_SERVICES, gson.toJson(mStoredServices)).commit();
+        sp.edit().putInt(NUM_COLUMNS, mNumGridCols).commit();
+        sp.edit().putBoolean(SORT_ORDER, mSortReverseAlpha).commit();
 
     }
 
@@ -283,6 +295,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
         appGrid.setSelector(R.drawable.selector_web_app_reco);
 
         appGrid.setAdapter(new RecoWebAppsAdapter(getActivity(), mImageLoader));
+        ((RecoWebAppsAdapter)appGrid.getAdapter()).sortAlphabetically1();
         builder.setView(rootView);
         builder.setPositiveButton("Add Selected", new DialogInterface.OnClickListener() {
             @Override
@@ -323,9 +336,9 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
 
     private void sortAppsAlphabetically(boolean reverse, GridView g) {
         if (reverse) {
-            ((WebAppAdatper)g.getAdapter()).sortAlphabetically1();
-        } else {
             ((WebAppAdatper)g.getAdapter()).sortAlphabetically2();
+        } else {
+            ((WebAppAdatper)g.getAdapter()).sortAlphabetically1();
         }
         ((WebAppAdatper)g.getAdapter()).notifyDataSetChanged();
 

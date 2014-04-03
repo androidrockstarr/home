@@ -22,6 +22,10 @@ import com.rajpriya.home.WebViewActivity;
 
 import java.net.NetworkInterface;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by rajkumar on 3/9/14.
@@ -33,6 +37,7 @@ public class RecoWebAppsAdapter extends BaseAdapter {
     private ImageLoader mImageLoader;
     private ArrayList<String> mSelectedNames;
     private ArrayList<String> mSelectedUrls;
+    private Map<String, String> mMap = new HashMap<String, String>();
 
     public RecoWebAppsAdapter(Context context, ImageLoader imageLoader) {
         this.context = context;
@@ -42,6 +47,12 @@ public class RecoWebAppsAdapter extends BaseAdapter {
         mImageLoader = imageLoader;
         mSelectedNames = new ArrayList<String>();
         mSelectedUrls = new ArrayList<String>();
+
+        //Map url n names
+        for(int i=0; i<mNames.size(); i++) {
+            String name = mNames.get(i);
+            mMap.put(name, mUrls.get(i));
+        }
 
     }
 
@@ -109,4 +120,20 @@ public class RecoWebAppsAdapter extends BaseAdapter {
         return mSelectedUrls;
     }
 
+    public void sortAlphabetically1() {
+        Collections.sort(mNames, new Comparator<String>() {
+            public int compare(String s1, String s2) {
+                return s1.compareToIgnoreCase(s2);
+            }
+        });
+        correctUrlsOrder();
+        notifyDataSetChanged();
+    }
+
+    public void correctUrlsOrder() {
+        mUrls.clear();
+        for (String name:mNames) {
+            mUrls.add(mMap.get(name));
+        }
+    }
 }
