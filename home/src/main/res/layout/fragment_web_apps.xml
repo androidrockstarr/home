@@ -9,8 +9,8 @@
         android:layout_height="wrap_content">
         <LinearLayout
             android:id="@+id/search_panel"
-            android:background="#cccc"
-            android:layout_marginTop="4dp"
+            android:background="#FFFFFF"
+            android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_gravity="top"
@@ -44,9 +44,9 @@
         android:id="@+id/appgrid"
         android:numColumns="3"
         android:fastScrollEnabled="true"
-        android:horizontalSpacing="8dp"
-        android:verticalSpacing="8dp"
-        android:padding="8dp"
+        android:horizontalSpacing="5dp"
+        android:verticalSpacing="5dp"
+        android:padding="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
