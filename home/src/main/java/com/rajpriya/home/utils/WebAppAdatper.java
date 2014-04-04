@@ -70,18 +70,14 @@ public class WebAppAdatper extends BaseAdapter implements Filterable{
             convertView = inflater.inflate(R.layout.webapp, null);
         }
 
+        Holder h = Holder.get(convertView);
         // set value into textview
-        TextView textView = (TextView) convertView
-                .findViewById(R.id.name);
-        textView.setText(mNames.get(position));
+        h.title.setText(mNames.get(position));
 
         // set image based on selected text
-        NetworkImageView imageView = (NetworkImageView) convertView
-                .findViewById(R.id.icon);
-
-        imageView.setImageUrl(mUrls.get(position) + "/favicon.ico", mImageLoader);
-        imageView.setDefaultImageResId(R.drawable.webapp_default);
-        imageView.setErrorImageResId(R.drawable.webapp_default);
+        h.icon.setImageUrl(mUrls.get(position) + "/favicon.ico", mImageLoader);
+        h.icon.setDefaultImageResId(R.drawable.webapp_default);
+        h.icon.setErrorImageResId(R.drawable.webapp_default);
 
         convertView.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View arg0) {
@@ -172,4 +168,24 @@ public class WebAppAdatper extends BaseAdapter implements Filterable{
             return new WebAppFilter(mNames, mUrls, this);
         else return mFilter;
     }
+
+
+    static final class Holder {
+        public final TextView title;
+        public final NetworkImageView icon;
+
+        Holder(View v) {
+            title = (TextView) v.findViewById(R.id.name);
+            icon = (NetworkImageView)v.findViewById(R.id.icon);
+            v.setTag(this);
+        }
+
+        static Holder get(View v) {
+            if (v.getTag() instanceof Holder) {
+                return (Holder) v.getTag();
+            }
+            return new Holder(v);
+        }
+    }
+
 }

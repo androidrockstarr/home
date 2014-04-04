@@ -68,19 +68,15 @@ public class RecoWebAppsAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.webapp, null);
         }
 
+        Holder h = Holder.get(convertView);
         // set value into textview
-        TextView textView = (TextView) convertView
-                .findViewById(R.id.name);
-        textView.setText(mNames.get(position));
-        textView.setTextColor(context.getResources().getColor(R.color.black));
+        h.title.setText(mNames.get(position));
+        h.title.setTextColor(context.getResources().getColor(R.color.black));
 
         // set image based on selected text
-        NetworkImageView imageView = (NetworkImageView) convertView
-                .findViewById(R.id.icon);
-
-        imageView.setImageUrl(mUrls.get(position) + "/favicon.ico", mImageLoader);
-        imageView.setDefaultImageResId(R.drawable.webapp_default);
-        imageView.setErrorImageResId(R.drawable.webapp_default);
+        h.icon.setImageUrl(mUrls.get(position) + "/favicon.ico", mImageLoader);
+        h.icon.setDefaultImageResId(R.drawable.webapp_default);
+        h.icon.setErrorImageResId(R.drawable.webapp_default);
 
 
         convertView.setOnClickListener(new View.OnClickListener() {
@@ -120,6 +116,7 @@ public class RecoWebAppsAdapter extends BaseAdapter {
         return mSelectedUrls;
     }
 
+
     public void sortAlphabetically1() {
         Collections.sort(mNames, new Comparator<String>() {
             public int compare(String s1, String s2) {
@@ -134,6 +131,26 @@ public class RecoWebAppsAdapter extends BaseAdapter {
         mUrls.clear();
         for (String name:mNames) {
             mUrls.add(mMap.get(name));
+
         }
     }
+
+    static final class Holder {
+        public final TextView title;
+        public final NetworkImageView icon;
+
+        Holder(View v) {
+            title = (TextView) v.findViewById(R.id.name);
+            icon = (NetworkImageView)v.findViewById(R.id.icon);
+            v.setTag(this);
+        }
+
+        static Holder get(View v) {
+            if (v.getTag() instanceof Holder) {
+                return (Holder) v.getTag();
+            }
+            return new Holder(v);
+        }
+    }
+
 }

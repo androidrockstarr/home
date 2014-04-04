@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.util.LruCache;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
@@ -24,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -73,6 +75,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
     private static int mNumGridCols;
     private boolean mSortReverseAlpha;
     private EditText mSearchBox;
+    private LinearLayout mSearchPane;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -148,6 +151,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
         sortAppsAlphabetically(mSortReverseAlpha, mAppGridGlobal);
         mAppGridGlobal.setNumColumns(mNumGridCols);
         mSearchBox = ((EditText)rootView.findViewById(R.id.search_box));
+        mSearchPane = (LinearLayout)rootView.findViewById(R.id.search_panel);
 
 
         rootView.findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
@@ -158,7 +162,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
                 imm.hideSoftInputFromWindow(getActivity().getWindow().getCurrentFocus().getWindowToken(), 0);
                 mSearchBox.clearFocus();
                 mSearchBox.setText("");
-                rootView.findViewById(R.id.search_panel).setVisibility(View.GONE);
+                mSearchPane.setVisibility(View.GONE);
 
             }
         });
@@ -217,11 +221,13 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
     @Override
     public void onPause() {
         super.onPause();
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        Gson gson = new Gson();
-        sp.edit().putString(PREF_STORED_SERVICES, gson.toJson(mStoredServices)).commit();
-        sp.edit().putInt(NUM_COLUMNS, mNumGridCols).commit();
-        sp.edit().putBoolean(SORT_ORDER, mSortReverseAlpha).commit();
+        if (mSearchPane.getVisibility() != View.VISIBLE) {
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            Gson gson = new Gson();
+            sp.edit().putString(PREF_STORED_SERVICES, gson.toJson(mStoredServices)).commit();
+            sp.edit().putInt(NUM_COLUMNS, mNumGridCols).commit();
+            sp.edit().putBoolean(SORT_ORDER, mSortReverseAlpha).commit();
+        }
 
     }
 
@@ -259,6 +265,17 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDestroyView () {
+        super.onDestroyView();
+        //Make sure search box is empty before closing the fragment,
+        //other wise all items are lost
+        if (mSearchPane.getVisibility() == View.VISIBLE) {
+            mSearchBox.setText("");
+            mSearchPane.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -370,10 +387,11 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
     }
 
     private void displaySearchBox() {
-        if (getActivity().findViewById(R.id.search_panel).getVisibility() == View.VISIBLE) {
-            return;        }
+        if (mSearchPane.getVisibility() == View.VISIBLE) {
+            return;
+        }
 
-        getActivity().findViewById(R.id.search_panel).setVisibility(View.VISIBLE);
+        mSearchPane.setVisibility(View.VISIBLE);
         mSearchBox.requestFocus();
         InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInputFromWindow(mSearchBox.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);

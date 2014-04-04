@@ -12,8 +12,8 @@
     <string name="facebook_url">http://m.facebook.com</string>
     <string name="twitter_url">https://mobile.twitter.com</string>
     <string name="google_translate_url">http://translate.google.com/m</string>
-    <string name="google_plus_url">https://plus.google.com/</string>
-    <string name="google_Search_url">https://google.com/m</string>
+    <string name="google_plus_url">http://www.plus.google.com/m</string>
+    <string name="google_Search_url">http://www.google.com/m</string>
     <string name="linkedin_url">https://touch.www.linkedin.com</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

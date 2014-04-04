@@ -42,6 +42,7 @@ public class ReccomondedService implements Parcelable {
         mNames.add("Rakuten");
         mNames.add("CNN");
         mNames.add("Instagram");
+        mNames.add("YouTube");
 
         mUrls.add(context.getString(R.string.facebook_url));
         mUrls.add(context.getString(R.string.twitter_url));
@@ -62,11 +63,12 @@ public class ReccomondedService implements Parcelable {
         mUrls.add("http://m.aypal.com");
         mUrls.add("http://m.imdb.com");
         mUrls.add("http://m.bbc.com");
-        mUrls.add("http://m.youku.com");
+        mUrls.add("http://www.youku.com/");
         mUrls.add("http://m.flickr.com");
         mUrls.add("http://m.rakuten.com");
-        mUrls.add("http://m.cnn.com");
-        mUrls.add("http://m.instagram.com");
+        mUrls.add("http://edition.cnn.com/");
+        mUrls.add("http://instagram.com/m");
+        mUrls.add("http://www.youtube.com/mobile");
 
     }
 

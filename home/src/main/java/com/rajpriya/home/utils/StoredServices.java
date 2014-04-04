@@ -41,7 +41,7 @@ public class StoredServices implements Parcelable{
         mUrls.add("http://m.pinterest.com");
         mUrls.add("http://m.bbc.com");
         mUrls.add("http://m.cnn.com");
-        mUrls.add("http://m.instagram.com");
+        mUrls.add("http://instagram.com/m");
 
     }
 
