@@ -57,6 +57,10 @@ public class WebAppAdatper extends BaseAdapter implements Filterable{
 
     }
 
+    public void refresh() {
+        ((WebAppFilter)mFilter).refresh();
+    }
+
     public View getView(final int position, View convertView, ViewGroup parent) {
 
 

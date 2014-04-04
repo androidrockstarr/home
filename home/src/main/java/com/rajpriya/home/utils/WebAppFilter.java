@@ -85,5 +85,12 @@ public class WebAppFilter extends Filter {
             mWwebAdapter.notifyDataSetChanged();
         }
     }
+
+    public void refresh() {
+        mWwebAdapter.mUrls.clear();
+        mWwebAdapter.mUrls.addAll(mUrls);
+        mWwebAdapter.mNames.clear();
+        mWwebAdapter.mNames.addAll(mNames);
+    }
 }
 

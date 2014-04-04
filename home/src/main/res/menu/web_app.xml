@@ -12,15 +12,20 @@
         app:showAsAction="ifRoom"
         android:orderInCategory="2"
         android:icon="@android:drawable/ic_menu_search"/>
+    <item android:id="@+id/action_refresh"
+        android:title="Refresh"
+        app:showAsAction="ifRoom"
+        android:orderInCategory="3"
+        android:icon="@android:drawable/ic_popup_sync"/>
     <item android:id="@+id/action_sort"
         android:title="Sort"
         app:showAsAction="ifRoom"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:icon="@android:drawable/ic_menu_sort_alphabetically"/>
     <item android:id="@+id/action_grid_size"
         android:title="Grid Size"
         app:showAsAction="ifRoom"
-        android:orderInCategory="4"
+        android:orderInCategory="5"
         android:icon="@android:drawable/ic_dialog_dialer"/>
 
 

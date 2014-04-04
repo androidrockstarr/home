@@ -141,9 +141,8 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
                              Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.fragment_web_apps, container, false);
-        final GridView mAppGrid = (GridView)rootView.findViewById(R.id.appgrid);
-        mAppGridGlobal = mAppGrid;
-        mAppGrid.setAdapter(new WebAppAdatper(getActivity(),
+        mAppGridGlobal = (GridView)rootView.findViewById(R.id.appgrid);
+        mAppGridGlobal.setAdapter(new WebAppAdatper(getActivity(),
                                              mStoredServices.getNames(),
                                              mStoredServices.getUrls(), mImageLoader));
 
@@ -171,7 +170,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
             @Override
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
                 // When user changed the Text
-                ((WebAppAdatper) mAppGrid.getAdapter()).getFilter().filter(cs);
+                ((WebAppAdatper) mAppGridGlobal.getAdapter()).getFilter().filter(cs);
             }
 
             @Override
@@ -262,6 +261,9 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
                 return true;
             case R.id.action_search:
                 displaySearchBox();
+                return true;
+            case R.id.action_refresh:
+                refreshApps();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -396,6 +398,10 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
         InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInputFromWindow(mSearchBox.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
 
+    }
+
+    private void refreshApps() {
+        ((WebAppAdatper)mAppGridGlobal.getAdapter()).refresh();
     }
 }
 
