@@ -94,7 +94,7 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 2:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, SettingsFragment.newInstance())
+                        .replace(R.id.container, HelpFragment.newInstance())
                         .commit();
                 break;
             case 3:
@@ -107,7 +107,7 @@ public class MainActivity extends ActionBarActivity
             break;
             case 4:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance(getString(R.string.drawer_item5)))
+                        .replace(R.id.container, AboutFragment.newInstance())
                         .commit();
                 break;
             default:

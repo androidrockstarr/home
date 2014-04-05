@@ -20,11 +20,11 @@
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
     <string name="action_full_screen">Full Screen View</string>
-    <string name="drawer_item1">WebApps</string>
-    <string name="drawer_item2">SystemApps</string>
-    <string name="drawer_item3">Setting</string>
+    <string name="drawer_item1">Web Apps</string>
+    <string name="drawer_item2">Native Android Apps</string>
+    <string name="drawer_item3">Help</string>
     <string name="drawer_item4">Rate this app</string>
-    <string name="drawer_item5">Help</string>
+    <string name="drawer_item5">About</string>
 
     <!-- AdMob -->
     <string name="ad_unit_id">ca-app-pub-3884355194866983/6822692958</string>
