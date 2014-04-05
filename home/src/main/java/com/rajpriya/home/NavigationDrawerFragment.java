@@ -1,6 +1,8 @@
 package com.rajpriya.home;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;;
 import android.app.Activity;
@@ -21,7 +23,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -109,43 +114,57 @@ public class NavigationDrawerFragment extends Fragment  {
                 selectItem(position);
             }
         });
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(
-                getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_1,
-                android.R.id.text1,
-                new String[]{
-                        getActivity().getString(R.string.drawer_item1),
-                        getActivity().getString(R.string.drawer_item2),
-                        getActivity().getString(R.string.drawer_item3),
-                        getActivity().getString(R.string.drawer_item4),
-                        getActivity().getString(R.string.drawer_item5)
-                }));
+
+        final String [] listItems = new String[]{
+                getActivity().getString(R.string.drawer_item1),
+                getActivity().getString(R.string.drawer_item2),
+                getActivity().getString(R.string.drawer_item3),
+                getActivity().getString(R.string.drawer_item4),
+                getActivity().getString(R.string.drawer_item5)
+        };
+        final int [] imageIds = new int[]{
+          R.drawable.web_app2,
+          android.R.drawable.sym_def_app_icon,
+          R.drawable.settings,
+          R.drawable.rate,
+          R.drawable.about
+        };
+
+        mDrawerListView.setAdapter(new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return listItems.length;
+            }
+
+            @Override
+            public Object getItem(int i) {
+                return null;
+            }
+
+            @Override
+            public long getItemId(int i) {
+                return 0;
+            }
+
+            @Override
+            public View getView(int i, View view, ViewGroup viewGroup) {
+                LayoutInflater inflater = (LayoutInflater) getActivity()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                if (view == null) {
+                    // get layout from mobile.xml
+                    view = inflater.inflate(R.layout.drawer_list_item, null);
+                }
+                TextView textView=(TextView) view.findViewById(R.id.list_text);
+                textView.setText(listItems[i]);
+                ImageView imageView=(ImageView) view.findViewById(R.id.list_image);
+                imageView.setImageResource(imageIds[i]);
+
+                return view;
+            }
+        });
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
 
-        /*root.findViewById(R.id.web_app).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mDrawerListView.setVisibility(mDrawerListView.getVisibility() == View.GONE ?
-                View.VISIBLE : View.GONE);
-            }
-        });
-
-        root.findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                AddServiceDialog editNameDialog = new AddServiceDialog(NavigationDrawerFragment.this);
-                editNameDialog.show(fm, "fragment_edit_name");
-            }
-        });
-
-        root.findViewById(R.id.system_apps).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getActivity(), InstalledAppsActivity.class));
-            }h
-        });*/
 
     }
 
@@ -247,27 +266,6 @@ a*/
         }
     }
 
-/*    @Override
-    public void onFinishEditDialog(String name, String url) {
-
-        if (!mStoredNames.contains(name)) {
-            mStoredNames.add(name);
-        } else {
-            //alert
-            return;
-        }
-
-        //ArrayAdapter<String> ar = ((ArrayAdapter<String>)mDrawerListView.getAdapter());
-
-        list.add(name);
-        ((WebAppAdatper)mDrawerListView.getAdapter()).notifyDataSetChanged();
-
-        if (mCallbacks != null) {
-                mCallbacks.onNewItemAdded(url);
-        }
-
-
-    }*/
 
     @Override
     public void onAttach(Activity activity) {

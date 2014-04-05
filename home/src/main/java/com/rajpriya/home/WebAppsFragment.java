@@ -76,6 +76,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
     private boolean mSortReverseAlpha;
     private EditText mSearchBox;
     private LinearLayout mSearchPane;
+    private TextView mButtonClose;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -151,9 +152,10 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
         mAppGridGlobal.setNumColumns(mNumGridCols);
         mSearchBox = ((EditText)rootView.findViewById(R.id.search_box));
         mSearchPane = (LinearLayout)rootView.findViewById(R.id.search_panel);
+        mButtonClose  = (TextView)rootView.findViewById(R.id.btn_close);
 
 
-        rootView.findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
+        mButtonClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -271,13 +273,14 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
 
     @Override
     public void onDestroyView () {
-        super.onDestroyView();
         //Make sure search box is empty before closing the fragment,
         //other wise all items are lost
         if (mSearchPane.getVisibility() == View.VISIBLE) {
             mSearchBox.setText("");
             mSearchPane.setVisibility(View.GONE);
         }
+
+        super.onDestroyView();
     }
 
     @Override
@@ -298,13 +301,15 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
         mStoredServices.getNames().add(name);
         mStoredServices.getUrls().add(url);
         ((WebAppAdatper)mAppGridGlobal.getAdapter()).notifyDataSetChanged();
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        Gson gson = new Gson();
-        sp.edit().putString(PREF_STORED_SERVICES, gson.toJson(mStoredServices)).commit();
+        ((WebAppAdatper)mAppGridGlobal.getAdapter()).onNewWebAppAdded(name, url);
 
     }
 
     private void displayAddNewServiceDlg(LayoutInflater i, final GridView g) {
+        if (mSearchPane.getVisibility() == View.VISIBLE) {
+            mButtonClose.performClick();
+        }
+
         //Display service list fragment
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Make your selection");

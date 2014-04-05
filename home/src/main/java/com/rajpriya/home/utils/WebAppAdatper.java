@@ -80,8 +80,8 @@ public class WebAppAdatper extends BaseAdapter implements Filterable{
 
         // set image based on selected text
         h.icon.setImageUrl(mUrls.get(position) + "/favicon.ico", mImageLoader);
-        h.icon.setDefaultImageResId(R.drawable.webapp_default);
-        h.icon.setErrorImageResId(R.drawable.webapp_default);
+        h.icon.setDefaultImageResId(R.drawable.web_app2);
+        h.icon.setErrorImageResId(R.drawable.web_app2);
 
         convertView.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View arg0) {
