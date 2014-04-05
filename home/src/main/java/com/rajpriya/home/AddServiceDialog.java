@@ -46,7 +46,7 @@ public class AddServiceDialog extends DialogFragment implements TextView.OnEdito
         mEditTextName = (EditText) view.findViewById(R.id.service_name);
         mEditTextUrl = (EditText) view.findViewById(R.id.service_url);
 
-        getDialog().setTitle("Add your favourite service");
+        getDialog().setTitle("Add your favourite");
 
         // Show soft keyboard automatically
         mEditTextName.requestFocus();

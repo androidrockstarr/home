@@ -108,7 +108,7 @@ public class InstalledAppsFragment extends Fragment {
 
         // Create an ad.
         mAdView = new AdView(getActivity());
-        mAdView.setBackgroundColor(getResources().getColor(R.color.white));
+        mAdView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
         mAdView.setAdSize(AdSize.BANNER);
         mAdView.setAdUnitId(getActivity().getResources().getString(R.string.ad_unit_id));
 

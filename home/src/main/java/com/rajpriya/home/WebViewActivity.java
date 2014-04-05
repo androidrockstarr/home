@@ -1,5 +1,7 @@
 package com.rajpriya.home;
 
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.rajpriya.home.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -9,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -16,6 +19,8 @@ import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -30,6 +35,7 @@ public class WebViewActivity extends Activity {
 
     WebView contentView = null;
     private ProgressBar progressbar;
+    private AdView mAdView;
 
     private String mUrl;
     private String mName;
@@ -66,6 +72,22 @@ public class WebViewActivity extends Activity {
 
         contentView = (WebView)findViewById(R.id.web_view);
         progressbar = (ProgressBar)findViewById(R.id.bar);
+
+
+        // Create an ad.
+        mAdView = new AdView(this);
+        mAdView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        mAdView.setAdSize(AdSize.BANNER);
+        mAdView.setAdUnitId(getResources().getString(R.string.ad_unit_id));
+
+        // Add the AdView to the view hierarchy. The view will have no size
+        // until the ad is loaded.
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.BOTTOM;
+        ((LinearLayout) findViewById(R.id.webview_parent)).addView(mAdView, 0, params);
+
+
 
         contentView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {

@@ -82,13 +82,19 @@ public class RecoWebAppsAdapter extends BaseAdapter {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                view.setBackgroundColor(context.getResources().getColor(R.color.crystal_blue));
-                mSelectedUrls.add(mUrls.get(position));
-                mSelectedNames.add(mNames.get(position));
+                if(view.isSelected()) {
+                    view.setSelected(false);
+                    view.setBackgroundColor(context.getResources().getColor(R.color.white));
+                    mSelectedUrls.remove(mUrls.get(position));
+                    mSelectedNames.remove(mNames.get(position));
+                } else {
+                    view.setSelected(true);
+                    view.setBackgroundColor(context.getResources().getColor(R.color.crystal_blue));
+                    mSelectedUrls.add(mUrls.get(position));
+                    mSelectedNames.add(mNames.get(position));
+                }
             }
         });
-
-
         return convertView;
     }
 

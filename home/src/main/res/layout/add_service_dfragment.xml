@@ -4,7 +4,7 @@
     android:layout_gravity="center" android:orientation="vertical"  >
 
     <TextView
-        android:text="Service Name"
+        android:text="Web Service Name"
         android:layout_width="wrap_content" android:layout_height="wrap_content" />
 
     <EditText
@@ -16,7 +16,7 @@
 
     <TextView
         android:layout_marginTop="20dp"
-        android:text="Service URL"
+        android:text="Web Service URL"
         android:layout_width="wrap_content" android:layout_height="wrap_content" />
 
     <EditText

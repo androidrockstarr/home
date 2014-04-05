@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,12 +32,16 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 import com.rajpriya.home.utils.PInfo;
 import com.rajpriya.home.utils.RecoWebAppsAdapter;
@@ -77,6 +82,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
     private EditText mSearchBox;
     private LinearLayout mSearchPane;
     private TextView mButtonClose;
+    private AdView mAdView;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -154,6 +160,28 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
         mSearchPane = (LinearLayout)rootView.findViewById(R.id.search_panel);
         mButtonClose  = (TextView)rootView.findViewById(R.id.btn_close);
 
+        // Create an ad.
+        mAdView = new AdView(getActivity());
+        mAdView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        mAdView.setAdSize(AdSize.BANNER);
+        mAdView.setAdUnitId(getActivity().getResources().getString(R.string.ad_unit_id));
+
+        // Add the AdView to the view hierarchy. The view will have no size
+        // until the ad is loaded.
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.BOTTOM;
+        ((LinearLayout) rootView).addView(mAdView, 1, params);
+
+        // Create an ad request. Check logcat output for the hashed device ID to
+        // get test ads on a physical device.
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("2B5FCE7F5371A6FE3457055EA04FDA8E")
+                .build();
+
+        // Start loading the ad in the background.
+        mAdView.loadAd(adRequest);
 
         mButtonClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -316,7 +344,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
         View rootView = i.inflate(R.layout.fragment_web_apps, null, false);
         rootView.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
         final GridView appGrid = (GridView)rootView.findViewById(R.id.appgrid);
-        appGrid.setSelector(R.drawable.selector_web_app_reco);
+        //appGrid.setSelector(R.drawable.selector_web_app_reco);
 
         appGrid.setAdapter(new RecoWebAppsAdapter(getActivity(), mImageLoader));
         ((RecoWebAppsAdapter)appGrid.getAdapter()).sortAlphabetically1();

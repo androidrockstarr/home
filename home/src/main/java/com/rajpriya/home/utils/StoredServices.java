@@ -29,6 +29,7 @@ public class StoredServices implements Parcelable{
         mNames.add("BBC");
         mNames.add("CNN");
         mNames.add("Instagram");
+        mNames.add("WhatsApp");
 
         mUrls.add(context.getString(R.string.facebook_url));
         mUrls.add(context.getString(R.string.twitter_url));
@@ -42,6 +43,7 @@ public class StoredServices implements Parcelable{
         mUrls.add("http://m.bbc.com");
         mUrls.add("http://m.cnn.com");
         mUrls.add("http://instagram.com/m");
+        mUrls.add("http://whatsapp.com/");
 
     }
 
