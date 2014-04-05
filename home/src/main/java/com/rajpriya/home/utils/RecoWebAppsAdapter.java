@@ -75,8 +75,8 @@ public class RecoWebAppsAdapter extends BaseAdapter {
 
         // set image based on selected text
         h.icon.setImageUrl(mUrls.get(position) + "/favicon.ico", mImageLoader);
-        h.icon.setDefaultImageResId(R.drawable.webapp_default);
-        h.icon.setErrorImageResId(R.drawable.webapp_default);
+        h.icon.setDefaultImageResId(R.drawable.web_app2);
+        h.icon.setErrorImageResId(R.drawable.web_app2);
 
 
         convertView.setOnClickListener(new View.OnClickListener() {

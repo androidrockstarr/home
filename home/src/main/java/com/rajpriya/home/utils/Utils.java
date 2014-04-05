@@ -50,7 +50,7 @@ public class Utils {
     public static void showActionDialog(final Context context, final String packageName) {
         final AlertDialog levelDialog;
         // Strings to Show In Dialog with Radio Buttons
-        final CharSequence[] items = {" Launch  "," Details "," Remove  ", " Send via Bluetooth"};
+        final CharSequence[] items = { " Send via Bluetooth", " Launch  ", " View in Google Play ", " Details "," Remove  ",};
 
         // Creating and Building the Dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -59,19 +59,19 @@ public class Utils {
             public void onClick(DialogInterface dialog, int item) {
                 switch(item)
                 {
-                    case 0:
+                    case 1:
                         // Your code when first option seletced
                         Utils.launchApp(context, packageName);
                         break;
-                    case 1:
+                    case 3:
                         // Your code when 2nd  option seletced
                         Utils.launchAppDetails(context, packageName);
                         break;
-                    case 2:
+                    case 4:
                         // Your code when 3rd option seletced
                         Utils.deleteApp(context, packageName);
                         break;
-                    case 3:
+                    case 0:
                         // Your code when 4th  option seletced
                         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
                         if (btAdapter == null) {
@@ -119,6 +119,14 @@ public class Utils {
                         if (app != null ) {
                             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(app.publicSourceDir)) );
                             context.startActivity(intent);
+                        }
+                        break;
+                    case 2:
+                        final String appPackageName = packageName; // getPackageName() from Context or Activity object
+                        try {
+                            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                        } catch (android.content.ActivityNotFoundException anfe) {
+                            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
                         }
                         break;
 

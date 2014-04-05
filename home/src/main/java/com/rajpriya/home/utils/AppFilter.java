@@ -2,7 +2,7 @@ package com.rajpriya.home.utils;
 
 import android.widget.Filter;
 
-import com.rajpriya.home.InstalledAppsActivity;
+import com.rajpriya.home.InstalledAppsFragment;
 
 import java.util.ArrayList;
 
@@ -11,9 +11,9 @@ import java.util.ArrayList;
  */
 public class AppFilter extends Filter {
     private ArrayList<PInfo> mApps;
-    private InstalledAppsActivity.AppAdapter mAa;
+    private InstalledAppsFragment.AppAdapter mAa;
 
-    public AppFilter(ArrayList<PInfo> apps, InstalledAppsActivity.AppAdapter aa ) {
+    public AppFilter(ArrayList<PInfo> apps, InstalledAppsFragment.AppAdapter aa ) {
         mApps = new ArrayList<PInfo>();
         mApps.addAll(apps);
         mAa = aa;

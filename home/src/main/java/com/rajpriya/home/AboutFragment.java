@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.io.InputStream;
+
 /**
  * Created by rajkumar on 4/5/14.
  */
@@ -24,15 +26,37 @@ public class AboutFragment extends Fragment {
         return new AboutFragment();
     }
 
-    private AboutFragment() {
+    public AboutFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
-        ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("About");
+        View rootView = inflater.inflate(R.layout.fragment_help, container, false);
+
+        String data = "";
+        try {
+            InputStream in_s = getActivity().getResources().openRawResource(R.raw.help);
+            byte[] b = new byte[in_s.available()];
+            in_s.read(b);
+            data = new String(b);
+            in_s.close();
+        } catch (Exception e) {
+            // e.printStackTrace();
+            data = "Error loading data";
+        }
+
+
+
+        ((WebView)rootView.findViewById(R.id.webview)).loadDataWithBaseURL(
+                null,
+                data,
+                "text/html",
+                "UTF-8",
+                null);
+        ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Help");
         return rootView;
+
     }
 
 }

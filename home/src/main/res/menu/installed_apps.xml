@@ -2,9 +2,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.rajpriya.home.InstalledAppsActivity" >
-    
-    <item android:id="@+id/action_full_screen"
-        android:title="@string/action_full_screen"
+
+    <item android:id="@+id/action_search"
+        android:title="Search"
+        app:showAsAction="ifRoom"
         android:orderInCategory="1"
-        app:showAsAction="always" />
+        android:icon="@android:drawable/ic_menu_search"/>
+    <item android:id="@+id/action_sort"
+        android:title="Sort"
+        app:showAsAction="ifRoom"
+        android:orderInCategory="2"
+        android:icon="@android:drawable/ic_menu_sort_by_size"/>
+    <item android:id="@+id/action_grid_size"
+        android:title="Grid Size"
+        app:showAsAction="ifRoom"
+        android:orderInCategory="3"
+        android:icon="@android:drawable/ic_dialog_dialer"/>
+
 </menu>

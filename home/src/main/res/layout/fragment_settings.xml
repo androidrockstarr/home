@@ -5,9 +5,9 @@
     android:background="@android:color/darker_gray">
 
     <LinearLayout
-        android:layout_marginTop="40dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:orientation="horizontal"
         android:background="@android:color/white"
         android:layout_width="match_parent"

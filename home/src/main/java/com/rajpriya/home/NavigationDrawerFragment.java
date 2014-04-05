@@ -118,14 +118,12 @@ public class NavigationDrawerFragment extends Fragment  {
         final String [] listItems = new String[]{
                 getActivity().getString(R.string.drawer_item1),
                 getActivity().getString(R.string.drawer_item2),
-                getActivity().getString(R.string.drawer_item3),
                 getActivity().getString(R.string.drawer_item4),
                 getActivity().getString(R.string.drawer_item5)
         };
         final int [] imageIds = new int[]{
           R.drawable.web_app2,
           android.R.drawable.sym_def_app_icon,
-          R.drawable.settings,
           R.drawable.rate,
           R.drawable.about
         };

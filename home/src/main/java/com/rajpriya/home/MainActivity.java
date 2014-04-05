@@ -90,14 +90,11 @@ public class MainActivity extends ActionBarActivity
                 break;
 
             case 1:
-                startActivity(new Intent(MainActivity.this, InstalledAppsActivity.class));
-                break;
-            case 2:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, HelpFragment.newInstance())
+                        .replace(R.id.container, new InstalledAppsFragment())
                         .commit();
                 break;
-            case 3:
+             case 2:
                 final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
@@ -105,7 +102,7 @@ public class MainActivity extends ActionBarActivity
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
                 }
             break;
-            case 4:
+            case 3:
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, AboutFragment.newInstance())
                         .commit();
@@ -145,21 +142,15 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onBackPressed () {
-        if (!getSupportActionBar().isShowing()) {
-            getSupportActionBar().show();
-            //mNavigationDrawerFragment.setMenuVisibility(true);
-        }
-        else {
-                FragmentManager fm = getSupportFragmentManager();
-                Fragment frag = fm.findFragmentById(R.id.container);
-                if (frag instanceof  WebAppsFragment) {
-                    WebView wv = (WebView)frag.getView().findViewById(R.id.section_label);
-                    if(wv != null &&  wv.canGoBack()) {
-                        wv.goBack();
-                    } else
-                        super.onBackPressed();
-                }
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment frag = fm.findFragmentById(R.id.container);
+        if (frag instanceof  WebAppsFragment) {
+            WebView wv = (WebView)frag.getView().findViewById(R.id.section_label);
+            if(wv != null &&  wv.canGoBack()) {
+                wv.goBack();
             }
+        }
+        super.onBackPressed();
     }
 
 

@@ -66,7 +66,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
      */
     private static final String ARG_ITEM_NAME = "DRAWER_ITEM_NAME";
     private static final String PREF_STORED_SERVICES = "rajpriya_stored_added_web_apps";
-    private static final String NUM_COLUMNS = "number_of_columns_in_gridView";
+    private static final String NUM_COLUMNS_WEB_APP = "number_of_columns_in_gridView_web_app";
     private static final String SORT_ORDER = "current_sort_order_of_grid_items";
 
     private StoredServices mStoredServices;
@@ -101,10 +101,10 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
         super.onCreate(savedInstance);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         if(savedInstance != null) {
-            mNumGridCols = savedInstance.getInt(NUM_COLUMNS, 3);
+            mNumGridCols = savedInstance.getInt(NUM_COLUMNS_WEB_APP, 3);
             mSortReverseAlpha = savedInstance.getBoolean(SORT_ORDER, false);
         } else {
-            mNumGridCols = sp.getInt(NUM_COLUMNS, 3);
+            mNumGridCols = sp.getInt(NUM_COLUMNS_WEB_APP, 3);
             mSortReverseAlpha = sp.getBoolean(SORT_ORDER, false);
         }
 
@@ -132,7 +132,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(NUM_COLUMNS, mNumGridCols);
+        outState.putInt(NUM_COLUMNS_WEB_APP, mNumGridCols);
         outState.putBoolean(SORT_ORDER, mSortReverseAlpha);
     }
 
@@ -226,7 +226,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
             Gson gson = new Gson();
             sp.edit().putString(PREF_STORED_SERVICES, gson.toJson(mStoredServices)).commit();
-            sp.edit().putInt(NUM_COLUMNS, mNumGridCols).commit();
+            sp.edit().putInt(NUM_COLUMNS_WEB_APP, mNumGridCols).commit();
             sp.edit().putBoolean(SORT_ORDER, mSortReverseAlpha).commit();
         }
 
