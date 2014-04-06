@@ -191,7 +191,7 @@ public class InstalledAppsFragment extends Fragment {
         super.onAttach(activity);
 
         if(((ActionBarActivity)activity).getSupportActionBar() != null) {
-            ((ActionBarActivity)activity).getSupportActionBar().setTitle("Installed Apps");
+            ((ActionBarActivity)activity).getSupportActionBar().setTitle("Apps on Device");
         }
 
     }
@@ -217,9 +217,7 @@ public class InstalledAppsFragment extends Fragment {
         int id = item.getItemId();
         switch(id) {
             case R.id.action_search:
-                if(mSearchPane.getVisibility() != View.VISIBLE) {
-                    mSearchPane.setVisibility(View.VISIBLE);
-                }
+                displaySearchBox();
                 return true;
             case R.id.action_sort:
                  showSortDlg();
@@ -352,6 +350,17 @@ public class InstalledAppsFragment extends Fragment {
         return res;
     }
 
+    private void displaySearchBox() {
+        if (mSearchPane.getVisibility() == View.VISIBLE) {
+            return;
+        }
+
+        mSearchPane.setVisibility(View.VISIBLE);
+        mSearchBox.requestFocus();
+        InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInputFromWindow(mSearchBox.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+
+    }
 
     public class AppAdapter extends BaseAdapter implements Filterable{
         private Context context;

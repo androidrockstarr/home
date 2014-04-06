@@ -5,6 +5,8 @@
 
     <TextView
         android:text="Web Service Name"
+        android:paddingLeft="2dp"
+        android:textStyle="bold"
         android:layout_width="wrap_content" android:layout_height="wrap_content" />
 
     <EditText
@@ -16,6 +18,8 @@
 
     <TextView
         android:layout_marginTop="20dp"
+        android:paddingLeft="2dp"
+        android:textStyle="bold"
         android:text="Web Service URL"
         android:layout_width="wrap_content" android:layout_height="wrap_content" />
 

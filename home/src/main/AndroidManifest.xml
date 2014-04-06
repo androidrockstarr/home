@@ -9,6 +9,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.rajpriya.home.MainActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,6 +22,7 @@
 
         <activity
             android:name="com.rajpriya.home.InstalledAppsActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_installed_apps" >
         </activity>
         <activity
@@ -30,6 +32,7 @@
         </activity>
         <activity
             android:name="com.rajpriya.home.SettingsActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_settings" >
         </activity>
         <!-- Activity required to show ad overlays. -->

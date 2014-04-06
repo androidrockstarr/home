@@ -170,7 +170,6 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
         // until the ad is loaded.
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.BOTTOM;
         ((LinearLayout) rootView).addView(mAdView, 1, params);
 
         // Create an ad request. Check logcat output for the hashed device ID to
@@ -242,7 +241,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
             /*((MainActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));*/
         if(((ActionBarActivity)activity).getSupportActionBar() != null) {
-            ((ActionBarActivity)activity).getSupportActionBar().setTitle("Bookmarks");
+            ((ActionBarActivity)activity).getSupportActionBar().setTitle("Web Apps");
         }
 
     }
@@ -314,7 +313,7 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
     @Override
     public void onFinishEditDialog(String name, String url) {
         if (TextUtils.isEmpty(url) ||  TextUtils.isEmpty(name)) {
-            Toast.makeText(getActivity(), "Name of URL is empty!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Name or URL is empty!", Toast.LENGTH_LONG).show();
             return;
         }
         if (mStoredServices.getUrls().contains(url)) {
@@ -328,8 +327,8 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
 
         mStoredServices.getNames().add(name);
         mStoredServices.getUrls().add(url);
-        ((WebAppAdatper)mAppGridGlobal.getAdapter()).notifyDataSetChanged();
         ((WebAppAdatper)mAppGridGlobal.getAdapter()).onNewWebAppAdded(name, url);
+        ((WebAppAdatper)mAppGridGlobal.getAdapter()).notifyDataSetChanged();
 
     }
 

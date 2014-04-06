@@ -1,7 +1,9 @@
 package com.rajpriya.home;
 
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.rajpriya.home.admob.ToastAdListener;
 import com.rajpriya.home.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -76,6 +78,7 @@ public class WebViewActivity extends Activity {
 
         // Create an ad.
         mAdView = new AdView(this);
+        //mAdView.setAdListener(new ToastAdListener(this));
         mAdView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
         mAdView.setAdSize(AdSize.BANNER);
         mAdView.setAdUnitId(getResources().getString(R.string.ad_unit_id));
@@ -83,11 +86,18 @@ public class WebViewActivity extends Activity {
         // Add the AdView to the view hierarchy. The view will have no size
         // until the ad is loaded.
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.BOTTOM;
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         ((LinearLayout) findViewById(R.id.webview_parent)).addView(mAdView, 0, params);
 
+        // Create an ad request. Check logcat output for the hashed device ID to
+        // get test ads on a physical device.
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("2B5FCE7F5371A6FE3457055EA04FDA8E")
+                .build();
 
+        // Start loading the ad in the background.
+        mAdView.loadAd(adRequest);
 
         contentView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {

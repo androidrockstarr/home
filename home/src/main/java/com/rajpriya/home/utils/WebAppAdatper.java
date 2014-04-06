@@ -123,6 +123,7 @@ public class WebAppAdatper extends BaseAdapter implements Filterable{
     }
 
     public void onNewWebAppAdded(String name, String url) {
+        mMap.put(name, url);
         ((WebAppFilter)mFilter).onNewWebAppAdded(name, url);
     }
     public void sortAlphabetically1() {

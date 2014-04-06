@@ -50,7 +50,7 @@ public class Utils {
     public static void showActionDialog(final Context context, final String packageName) {
         final AlertDialog levelDialog;
         // Strings to Show In Dialog with Radio Buttons
-        final CharSequence[] items = { " Send via Bluetooth", " Launch  ", " View in Google Play ", " Details "," Remove  ",};
+        final CharSequence[] items = { " Share this App ", " Launch  ", " View in Google Play ", " View Details "," Uninstall from Device ",};
 
         // Creating and Building the Dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -88,7 +88,7 @@ public class Utils {
                       PackageManager pm = context.getPackageManager();
                       List<ResolveInfo> appsList = pm.queryIntentActivities( intent, 0);
 
-                      if(appsList.size() > 0) {
+                     /* if(appsList.size() > 0) {
                         // proceed
                         //select bluetooth
                         String packageName = null;
@@ -108,7 +108,7 @@ public class Utils {
                             //break;
                         }
                           intent.setClassName(packageName, className);
-                       }
+                       }*/
 
                     ApplicationInfo app = null;
                         try {

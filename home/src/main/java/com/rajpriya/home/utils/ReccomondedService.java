@@ -19,6 +19,7 @@ public class ReccomondedService implements Parcelable {
     private ArrayList<String> mUrls = new ArrayList<String>();
 
     public ReccomondedService (Context context) {
+        mNames.add("TOI");
         mNames.add(context.getString(R.string.title_section1));
         mNames.add(context.getString(R.string.title_section2));
         mNames.add(context.getString(R.string.title_section3));
@@ -44,6 +45,7 @@ public class ReccomondedService implements Parcelable {
         mNames.add("Instagram");
         mNames.add("YouTube");
 
+        mUrls.add("http://m.timesofindia.com/");
         mUrls.add(context.getString(R.string.facebook_url));
         mUrls.add(context.getString(R.string.twitter_url));
         mUrls.add(context.getString(R.string.linkedin_url));
@@ -60,7 +62,7 @@ public class ReccomondedService implements Parcelable {
         mUrls.add("http://m.ebay.com");
         mUrls.add("http://m.tumblr.com");
         mUrls.add("http://m.pinterest.com");
-        mUrls.add("http://m.aypal.com");
+        mUrls.add("http://m.paypal.com");
         mUrls.add("http://m.imdb.com");
         mUrls.add("http://m.bbc.com");
         mUrls.add("http://www.youku.com/");
