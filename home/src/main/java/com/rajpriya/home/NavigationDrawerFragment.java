@@ -29,6 +29,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.Fields;
+import com.google.analytics.tracking.android.MapBuilder;
+import com.google.analytics.tracking.android.Tracker;
 import com.google.gson.Gson;
 import com.rajpriya.home.utils.StoredServices;
 import com.rajpriya.home.utils.WebAppAdatper;
@@ -100,6 +104,23 @@ public class NavigationDrawerFragment extends Fragment  {
         super.onActivityCreated(savedInstanceState);
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // May return null if EasyTracker has not yet been initialized with a property ID.
+        Tracker easyTracker = EasyTracker.getInstance(getActivity());
+        if (easyTracker != null) {
+            // This screen name value will remain set on the tracker and sent with
+            // hits until it is set to a new value or to null.
+            easyTracker.set(Fields.SCREEN_NAME, "DrawerFragment");
+            easyTracker.send(MapBuilder
+                            .createAppView()
+                            .build()
+            );
+
+        }
     }
 
     @Override

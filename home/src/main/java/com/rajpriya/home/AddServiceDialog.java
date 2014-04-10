@@ -17,6 +17,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.Fields;
+import com.google.analytics.tracking.android.MapBuilder;
+import com.google.analytics.tracking.android.Tracker;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -58,6 +63,23 @@ public class AddServiceDialog extends DialogFragment implements TextView.OnEdito
         mEditTextUrl.setOnEditorActionListener(this);
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // May return null if EasyTracker has not yet been initialized with a property ID.
+        Tracker easyTracker = EasyTracker.getInstance(getActivity());
+        if (easyTracker != null) {
+            // This screen name value will remain set on the tracker and sent with
+            // hits until it is set to a new value or to null.
+            easyTracker.set(Fields.SCREEN_NAME, "AddServiceDialog");
+            easyTracker.send(MapBuilder
+                            .createAppView()
+                            .build()
+            );
+
+        }
     }
 
     @Override

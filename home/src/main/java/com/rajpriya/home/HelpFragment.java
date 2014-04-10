@@ -10,6 +10,11 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.Fields;
+import com.google.analytics.tracking.android.MapBuilder;
+import com.google.analytics.tracking.android.Tracker;
+
 import java.io.InputStream;
 
 /**
@@ -57,6 +62,23 @@ public class HelpFragment extends Fragment {
         ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Help");
         return rootView;
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // May return null if EasyTracker has not yet been initialized with a property ID.
+        Tracker easyTracker = EasyTracker.getInstance(getActivity());
+        if (easyTracker != null) {
+            // This screen name value will remain set on the tracker and sent with
+            // hits until it is set to a new value or to null.
+            easyTracker.set(Fields.SCREEN_NAME, "HelpFragment");
+            easyTracker.send(MapBuilder
+                            .createAppView()
+                            .build()
+            );
+
+        }
     }
 
 }

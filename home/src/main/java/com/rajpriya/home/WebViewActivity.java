@@ -1,9 +1,12 @@
 package com.rajpriya.home;
 
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.Fields;
+import com.google.analytics.tracking.android.MapBuilder;
+import com.google.analytics.tracking.android.Tracker;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
-import com.rajpriya.home.admob.ToastAdListener;
 import com.rajpriya.home.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -133,5 +136,22 @@ public class WebViewActivity extends Activity {
             } else
                 super.onBackPressed();
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // May return null if EasyTracker has not yet been initialized with a property ID.
+        Tracker easyTracker = EasyTracker.getInstance(this);
+        if (easyTracker != null) {
+            // This screen name value will remain set on the tracker and sent with
+            // hits until it is set to a new value or to null.
+            easyTracker.set(Fields.SCREEN_NAME, "WebView Activity");
+            easyTracker.send(MapBuilder
+                            .createAppView()
+                            .build()
+            );
+
+        }
     }
 }

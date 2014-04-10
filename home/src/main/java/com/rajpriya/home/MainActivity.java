@@ -27,8 +27,13 @@ import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.google.analytics.tracking.android.Fields;
+import com.google.analytics.tracking.android.MapBuilder;
+import com.google.analytics.tracking.android.Tracker;
 import com.google.gson.Gson;
 import com.rajpriya.home.utils.StoredServices;
+
+import com.google.analytics.tracking.android.EasyTracker;
 
 import java.util.ArrayList;
 
@@ -163,6 +168,34 @@ public class MainActivity extends ActionBarActivity
         }
 //        else
 //            super.onResume();
+
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+
+        // May return null if EasyTracker has not yet been initialized with a property ID.
+        Tracker easyTracker = EasyTracker.getInstance(this);
+        if (easyTracker != null) {
+            // This screen name value will remain set on the tracker and sent with
+            // hits until it is set to a new value or to null.
+            easyTracker.set(Fields.SCREEN_NAME, "MainActivity");
+            easyTracker.send(MapBuilder
+                            .createAppView()
+                            .build()
+            );
+
+        }
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EasyTracker.getInstance(this).activityStop(this);  // Add this method.
     }
 
     @Override
@@ -262,6 +295,7 @@ public class MainActivity extends ActionBarActivity
             /*((MainActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));*/
         }
+
     }
 
 }
