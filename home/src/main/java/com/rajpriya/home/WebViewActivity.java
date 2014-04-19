@@ -4,9 +4,6 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.Fields;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.Tracker;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 import com.rajpriya.home.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -19,12 +16,14 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -40,7 +39,6 @@ public class WebViewActivity extends Activity {
 
     WebView contentView = null;
     private ProgressBar progressbar;
-    private AdView mAdView;
 
     private String mUrl;
     private String mName;
@@ -79,29 +77,6 @@ public class WebViewActivity extends Activity {
         progressbar = (ProgressBar)findViewById(R.id.bar);
 
 
-        // Create an ad.
-        mAdView = new AdView(this);
-        //mAdView.setAdListener(new ToastAdListener(this));
-        mAdView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        mAdView.setAdSize(AdSize.BANNER);
-        mAdView.setAdUnitId(getResources().getString(R.string.ad_unit_id));
-
-        // Add the AdView to the view hierarchy. The view will have no size
-        // until the ad is loaded.
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        ((LinearLayout) findViewById(R.id.webview_parent)).addView(mAdView, 0, params);
-
-        // Create an ad request. Check logcat output for the hashed device ID to
-        // get test ads on a physical device.
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("2B5FCE7F5371A6FE3457055EA04FDA8E")
-                .build();
-
-        // Start loading the ad in the background.
-        mAdView.loadAd(adRequest);
-
         contentView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
@@ -125,6 +100,62 @@ public class WebViewActivity extends Activity {
                 }
             }
         });
+
+
+
+        final int windowwidth = getWindowManager().getDefaultDisplay().getWidth();
+        final int windowheight = getWindowManager().getDefaultDisplay().getHeight();
+        final ImageView img = (ImageView) findViewById(R.id.playicon);
+        final ImageView close = (ImageView) findViewById(R.id.btn_close);
+
+
+        img.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) img
+                        .getLayoutParams();
+
+                FrameLayout.LayoutParams layoutParamsClose = (FrameLayout.LayoutParams) close
+                        .getLayoutParams();
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        close.setVisibility(View.VISIBLE);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        close.setVisibility(View.GONE);
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        int x_cord = (int) event.getRawX();
+                        int y_cord = (int) event.getRawY();
+
+                        if (x_cord > windowwidth) {
+                            x_cord = windowwidth;
+                        }
+                        if (y_cord > windowheight) {
+                            y_cord = windowheight;
+                        }
+
+                        layoutParams.leftMargin = x_cord - 25;
+                        layoutParams.topMargin = y_cord - 75;
+
+                        img.setLayoutParams(layoutParams);
+
+                        if (x_cord >= (windowwidth - getResources().getDimensionPixelSize(R.dimen.image_size))
+                            &&
+                            y_cord >= (windowheight - getResources().getDimensionPixelSize(R.dimen.image_size))
+                                ) {
+                            WebViewActivity.this.finish();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                return true;
+            }
+        });
+
 
     }
 

@@ -1,5 +1,6 @@
 package com.rajpriya.home.utils;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -10,8 +11,10 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.provider.Settings;
+import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
+import com.rajpriya.home.InstalledAppsFragment;
 import com.rajpriya.home.R;
 
 import java.io.File;
@@ -21,6 +24,10 @@ import java.util.List;
  * Created by rajkumar on 3/8/14.
  */
 public class Utils {
+
+    public interface AppUninstall {
+        public void onAppDeleted();
+    }
 
     public static void launchAppDetails(final Context context, final String packageName) {
         Intent intent = new Intent();
@@ -42,12 +49,13 @@ public class Utils {
     }
 
 
-    public static void deleteApp(final Context context, final String packageName) {
+    public static void deleteApp(final Context context, final String packageName, InstalledAppsFragment caller) {
         Intent intent = new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+packageName));
-        context.startActivity(intent);
+        ((Activity)context).startActivityForResult(intent, 200);
     }
 
-    public static void showActionDialog(final Context context, final String packageName) {
+
+    public static void showActionDialog(final Context context, final String packageName, final InstalledAppsFragment caller) {
         final AlertDialog levelDialog;
         // Strings to Show In Dialog with Radio Buttons
         final CharSequence[] items = { " Share this App ", " Launch  ", " View in Google Play ", " View Details "," Uninstall from Device ",};
@@ -69,7 +77,7 @@ public class Utils {
                         break;
                     case 4:
                         // Your code when 3rd option seletced
-                        Utils.deleteApp(context, packageName);
+                        Utils.deleteApp(context, packageName, caller);
                         break;
                     case 0:
                         // Your code when 4th  option seletced
@@ -136,5 +144,16 @@ public class Utils {
         });
         levelDialog = builder.create();
         levelDialog.show();
+    }
+
+
+    /** Check if the application is uninstalled from System */
+    public static boolean  isAppPresent(String packageName,Context context) {
+        try{
+            ApplicationInfo info = context.getPackageManager().getApplicationInfo(packageName, 0 );
+            return true;
+        } catch( PackageManager.NameNotFoundException e ){
+            return false;
+        }
     }
 }

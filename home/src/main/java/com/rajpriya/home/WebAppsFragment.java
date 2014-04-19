@@ -44,9 +44,6 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.Fields;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.Tracker;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 import com.rajpriya.home.utils.PInfo;
 import com.rajpriya.home.utils.RecoWebAppsAdapter;
@@ -87,7 +84,6 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
     private EditText mSearchBox;
     private LinearLayout mSearchPane;
     private TextView mButtonClose;
-    private AdView mAdView;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -165,27 +161,6 @@ public class WebAppsFragment extends Fragment implements  AddServiceDialog.EditN
         mSearchPane = (LinearLayout)rootView.findViewById(R.id.search_panel);
         mButtonClose  = (TextView)rootView.findViewById(R.id.btn_close);
 
-        // Create an ad.
-        mAdView = new AdView(getActivity());
-        mAdView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        mAdView.setAdSize(AdSize.BANNER);
-        mAdView.setAdUnitId(getActivity().getResources().getString(R.string.ad_unit_id));
-
-        // Add the AdView to the view hierarchy. The view will have no size
-        // until the ad is loaded.
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        ((LinearLayout) rootView).addView(mAdView, 1, params);
-
-        // Create an ad request. Check logcat output for the hashed device ID to
-        // get test ads on a physical device.
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("2B5FCE7F5371A6FE3457055EA04FDA8E")
-                .build();
-
-        // Start loading the ad in the background.
-        mAdView.loadAd(adRequest);
 
         mButtonClose.setOnClickListener(new View.OnClickListener() {
             @Override

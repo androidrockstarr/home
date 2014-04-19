@@ -17,6 +17,23 @@
             android:layout_height="match_parent"
             android:keepScreenOn="true" />
 
+        <ImageView
+            android:id="@+id/playicon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:scaleType="fitCenter"
+            android:layout_gravity="top|left"
+            android:src="@drawable/appmania"
+            />
+        <ImageView
+            android:id="@+id/btn_close"
+            android:visibility="gone"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:scaleType="fitCenter"
+            android:layout_gravity="bottom|right"
+            android:src="@android:drawable/ic_delete"
+            />
         <ProgressBar
             android:id="@+id/bar"
             android:indeterminate="true"

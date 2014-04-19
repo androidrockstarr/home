@@ -158,6 +158,19 @@ public class MainActivity extends ActionBarActivity
         super.onBackPressed();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==200){
+            FragmentManager fm = getSupportFragmentManager();
+            Fragment frag = fm.findFragmentById(R.id.container);
+            if (frag instanceof  InstalledAppsFragment) {
+                ((InstalledAppsFragment) frag).onAppDeleted();
+            }
+        }
+
+    }
+
 
     @Override
     public void onResume () {

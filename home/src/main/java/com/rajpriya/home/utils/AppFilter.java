@@ -18,6 +18,11 @@ public class AppFilter extends Filter {
         mApps.addAll(apps);
         mAa = aa;
     }
+
+    public ArrayList<PInfo> getApps () {
+        return mApps;
+    }
+
     @Override
     protected FilterResults performFiltering(CharSequence constraint) {
         FilterResults results = new FilterResults();

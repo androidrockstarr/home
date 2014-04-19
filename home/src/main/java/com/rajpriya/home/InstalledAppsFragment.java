@@ -43,16 +43,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.Fields;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.Tracker;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
-import com.rajpriya.home.admob.ToastAdListener;
 import com.rajpriya.home.utils.AppFilter;
 import com.rajpriya.home.utils.ImageHelper;
 import com.rajpriya.home.utils.PInfo;
@@ -65,11 +60,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class InstalledAppsFragment extends Fragment {
+public class InstalledAppsFragment extends Fragment implements Utils.AppUninstall {
 
     private static final String NUM_COLUMNS = "number_of_columns_in_gridView";
 
-    private AdView mAdView;
     private EditText mSearchBox;
     private LinearLayout mSearchPane;
     private TextView mButtonClose;
@@ -77,6 +71,7 @@ public class InstalledAppsFragment extends Fragment {
     private LinearLayout mT;
     private Context mContext;
     private int mGridColumns;
+    private AsyncTask mTask;
 
 
     private  static ArrayList<PInfo>  mApps;
@@ -105,32 +100,10 @@ public class InstalledAppsFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_installed_apps, container, false);
         final EditText box = ((EditText)rootView.findViewById(R.id.search_box));
         mV = ((GridView)rootView.findViewById(R.id.appgrid));
-        mV.setAdapter(new AppAdapter(getActivity() , mApps));
+        mV.setAdapter(new AppAdapter(getActivity() , mApps, this));
         mV.setNumColumns(mGridColumns);
 
-        final AsyncTask task = new FetchAppListTask(getActivity(), mV).execute();
-
-        // Create an ad.
-        mAdView = new AdView(getActivity());
-        mAdView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        mAdView.setAdSize(AdSize.BANNER);
-        mAdView.setAdUnitId(getActivity().getResources().getString(R.string.ad_unit_id));
-
-        // Add the AdView to the view hierarchy. The view will have no size
-        // until the ad is loaded.
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        ((LinearLayout) rootView).addView(mAdView, 1, params);
-
-        // Create an ad request. Check logcat output for the hashed device ID to
-        // get test ads on a physical device.
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("2B5FCE7F5371A6FE3457055EA04FDA8E")
-                .build();
-
-        // Start loading the ad in the background.
-        mAdView.loadAd(adRequest);
+        mTask = new FetchAppListTask(getActivity(), mV, this).execute();
 
 
         mSearchBox = (EditText)rootView.findViewById(R.id.search_box);
@@ -382,14 +355,21 @@ public class InstalledAppsFragment extends Fragment {
 
     }
 
+    @Override
+    public void onAppDeleted() {
+        ((AppAdapter) mV.getAdapter()).someAppRemoved();
+    }
+
     public class AppAdapter extends BaseAdapter implements Filterable{
         private Context context;
         public ArrayList<PInfo> mApps;
         private Filter appFilter;
+        private InstalledAppsFragment parentFrag;
 
 
-        public AppAdapter(Context context, ArrayList<PInfo> apps) {
+        public AppAdapter(Context context, ArrayList<PInfo> apps, InstalledAppsFragment f) {
             this.context = context;
+            parentFrag = f;
             mApps = apps;
             appFilter = new AppFilter(mApps, this);
 
@@ -426,7 +406,7 @@ public class InstalledAppsFragment extends Fragment {
             gridView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Utils.showActionDialog(context, mApps.get(position).pname);
+                    Utils.showActionDialog(context, mApps.get(position).pname, parentFrag);
                 }
             });
 
@@ -454,6 +434,29 @@ public class InstalledAppsFragment extends Fragment {
             return  new AppFilter(mApps, this);
             else return appFilter;
         }
+
+        public void someAppRemoved() {
+            for (int i=0; i< mApps.size(); i++) {
+                if (!Utils.isAppPresent(mApps.get(i).pname, getActivity())) {
+                    mApps.remove(i);
+                    ((AppFilter)appFilter).getApps().remove(i);
+                    break;
+
+                }
+            }
+            notifyDataSetChanged();
+        }
+
+        public void removeApp(String packageName) {
+            for (int i=0; i< mApps.size(); i++) {
+                if(packageName.equals(mApps.get(i).pname)) {
+                    mApps.remove(i);
+                    ((AppFilter)appFilter).getApps().remove(i);
+                    break;
+                }
+            }
+            notifyDataSetChanged();
+        }
     }
 
 
@@ -462,11 +465,13 @@ public class InstalledAppsFragment extends Fragment {
         private ProgressDialog dialog;
         private Context mContext;
         private GridView mV;
+        private InstalledAppsFragment iaf;
 
-        public FetchAppListTask(Context context, GridView v) {
+        public FetchAppListTask(Context context, GridView v, InstalledAppsFragment f) {
             mContext = context;
             dialog = new ProgressDialog(mContext);
             mV=v;
+            iaf = f;
         }
         @Override
         protected Boolean doInBackground(String... strings) {
@@ -482,40 +487,19 @@ public class InstalledAppsFragment extends Fragment {
         @Override
         protected void onPostExecute(final Boolean success) {
 
-
-
             if (dialog.isShowing())
                 dialog.dismiss();
 
-            mV.setAdapter(new AppAdapter(mContext , mApps));
+            mV.setAdapter(new AppAdapter(mContext , mApps, iaf));
             ((AppAdapter)mV.getAdapter()).notifyDataSetChanged();
         }
 
     }
     @Override
     public void onPause() {
-        if (mAdView != null) {
-            mAdView.pause();
-        }
-
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         sp.edit().putInt(NUM_COLUMNS, mGridColumns).commit();
         super.onPause();
     }
 
-    @Override
-    public void onResume() {
-        if (mAdView != null) {
-            mAdView.resume();
-        }
-        super.onResume();
-    }
-
-    @Override
-    public void onDestroy() {
-        if (mAdView != null) {
-            mAdView.destroy();
-        }
-        super.onDestroy();
-    }
 }
