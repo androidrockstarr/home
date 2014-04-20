@@ -44,6 +44,10 @@ public class AddServiceDialog extends DialogFragment implements TextView.OnEdito
         mCaller  = caller;
     }
 
+    public AddServiceDialog() {
+        // Empty constructor required for DialogFragment
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

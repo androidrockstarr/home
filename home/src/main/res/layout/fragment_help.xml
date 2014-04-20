@@ -23,7 +23,7 @@
             android:layout_gravity="center"
             android:gravity="left"/>
         <TextView
-            android:text="1.0.0"
+            android:text="1.0.1"
             android:textSize="18sp"
             android:paddingRight="4dp"
             android:textStyle="italic"
